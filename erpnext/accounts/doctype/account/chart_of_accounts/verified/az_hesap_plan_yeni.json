@@ -1,0 +1,98 @@
+{
+    "country_code": "az",
+    "name": "AZ - Hesaplar planı (YENİ)",
+    "tree": {
+        "1 - UZUNMÜDDƏTLİ AKTİVLƏR":{
+            "root_type": "Equity",
+            "account_number":"1",
+            "is_group": 1,
+            "10 - Qeyri-maddi aktivlər":{
+                "account_number": "10",
+                "is_group": 1,
+                "101 - Qeyri-maddi aktivlər - Dəyər":{"account_number": "101"},
+                "102 - Qeyri-maddi aktivlər - Amortizasiya":{"account_number": "102"},
+                "103 - Qeyri-maddi aktivlərlə bağlı məsrəflərin kapitallaşdırılması":{"account_number": "103"}
+            },
+            "11 - Torpaq, tikili və avadanlıqlar":{
+                "account_number": "11",
+                "is_group": 1,
+                "111 - Torpaq, tikili və avadanlıqlar - Dəyər":{"account_number": "111"},
+                "112 - Torpaq, tikili və avadanlıqlar - Amortizasiya":{"account_number": "112"},
+                "113 - Torpaq, tikili və avadanlıqlarla bağlı məsrəflərin kapitallaşdırılması":{"account_number": "113"}
+            },
+            "12 - Daşınmaz əmlaka investisiyalar":{
+                "account_number": "12",
+                "is_group": 1,
+                "121 - Daşınmaz əmlaka investisiyalar - Dəyər": {"account_number": "121"},
+                "122 - Daşınmaz əmlaka investisiyalar - Amortizasiya": {"account_number": "122"}
+            },
+            "13 - Bioloji aktivlər":{
+                "account_number": "13",
+                "is_group": 1,
+                "131 - Bioloji aktivlər - Dəyər": {"account_number": "131"},
+                "132 - Bioloji aktivlər - Amortizasiya": {"account_number": "132"}
+            },
+            "14 - Təbii sərvətlər": {
+                "account_number": "14",
+                "is_group": 1,
+                "141 - Təbii sərvətlər - Dəyər": {"account_number": "141"},
+                "142 - Təbii sərvətlər - Tükənməsi": {"account_number": "142"}
+            },
+            "15 - İştirak payı metodu ilə uçota alınmış investisiyalar": {
+                "account_number": "15",
+                "is_group": 1,
+                "151 - Asılı müəssisələrə investisiyalar": {"account_number": "151"},
+                "152 - Birgə müəssisələrə investisiyalar": {"account_number": "152"}
+            },
+            "16 - Təxirə salınmış vergi aktivləri": {
+                "account_number": "16",
+                "is_group": 1,
+                "161 - Mənfəət vergisi üzrə təxirə salınmış vergi aktivləri": {"account_number": "161"},
+                "162 - Digər təxirə salınmış vergi aktivləri": {"account_number": "162"}
+            },
+            "17 - Uzunmüddətli debitor borcları": {
+                "account_number": "17",
+                "is_group": 1,
+                "171 - Alıcıların və sifarişçilərin uzunmüddətli debitor borcları": {"account_number": "171"},
+                "172 - Törəmə (asılı) müəssisələrin uzunmüddətli debitor borcları": {"account_number": "172"},
+                "173 - İşçi heyətinin uzunmüddətli debitor borcları": {"account_number": "173"},
+                "174 - İcarə üzrə uzunmüddətli debitor borcları": {"account_number": "174"},
+                "175 - Tikinti müqavilələri üzrə uzunmüddətli debitor borcları": {"account_number": "175"},
+                "176 - Faizlər üzrə uzunmüddətli debitor borcları": {"account_number": "176"},
+                "177 - Digər uzunmü,ddətli debitor borcları": {"account_number": "177"}
+            },
+            "18 - Sair uzunmüddətli maliyyə aktivləri": {
+                "account_number": "18",
+                "is_group": 1,
+                "181 - Ödənişə qədər saxlanılan uzunmüddətli investisiyalar": {"account_number": "181"},
+                "182 - Uzunmüddətli verilmiş borclar": {"account_number": "182"},
+                "183 - Digər uzunmüddətli investisiyalar": {"account_number": "183"},
+                "184 - Sair uzunmüddətli maliyyə aktivlərinin dəyərinin azalmasına görə düzəliş": {"account_number": "184"}
+            },
+            "19 - Sair uzunmüddətli aktivlər": {
+                "account_number": "19",
+                "is_group": 1,
+                "191 - Gələcək dövrlərin xərcləri": {"account_number": "191"},
+                "192 - Verilmiş uzunmüddətli avanslar": {"account_number": "192"},
+                "193 - Digər uzunmüddətli aktivlər": {"account_number": "193"}
+            }
+        },
+        "2 - QISAMÜDDƏTLİ AKTİVLƏR": {
+            "root_type": "Equity",
+            "account_number":"1",
+            "is_group": 1,
+            "20 - Ehtiyatlar": {
+                "account_number": "20",
+                "is_group": 1,
+                "201 - Xammal və materiallar": {"account_number": "201"},
+                "202 - İstehsalat xərcləri": {"account_number": "202"},
+                "203 - Tikinti müqavilələri üzrə bitməmiş tikinti işləri": {"account_number": "203"},
+                "204 - Hazır məhsul": {"account_number": "204"},
+                "205 - Mallar": {"account_number": "205"},
+                "206 - Satış məqsədi ilə saxlanılan digər aktivlər": {"account_number": "206"},
+                "207 - Digər ehtiyatlar": {"account_number": "207"},
+                "208 - Ehtiyatların dəyərinin azalmasına görə düzəlişlər": {"account_number": "208"}
+            }
+        }
+    } 
+}

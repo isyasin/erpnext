@@ -312,7 +312,7 @@
             "70 - Satışın maya dəyəri": {
                 "account_number": "70",
                 "is_group": 1,
-                "701 - Satışın maya dəyəri": {"account_number": "701", "account_type":"Cost Of Goods Sold"}
+                "701 - Satışın maya dəyəri": {"account_number": "701", "account_type":"Cost of Goods Sold"}
             },
             "71 - Kommersiya xərcləri": {
                 "account_number": "71",

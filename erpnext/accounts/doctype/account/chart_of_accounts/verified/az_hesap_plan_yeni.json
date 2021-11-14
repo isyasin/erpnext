@@ -258,7 +258,7 @@
                 "532 - Törəmə(asılı) müəssisələrə qısamüddətli kreditor borcları": {"account_number": "532"},
                 "533 - İşçi heyətinə qısamüddətli kreditor borcları": {"account_number": "533"},
                 "534 - Dividendlərin ödənilməsi üzrə təsisçilərə kreditor borcları": {"account_number": "534"},
-                "535 - İcarə üzrə qısamüddətli kreditor borcları": {"account_number": "534"},
+                "535 - İcarə üzrə qısamüddətli kreditor borcları": {"account_number": "535"},
                 "536 - Tikinti müqavilələri üzrə qısamüddətli kreditor borcları": {"account_number": "536"},
                 "537 - Faizlər üzrə qısamüddətli kreditor borcları": {"account_number": "537"},
                 "538 - Digər qısamüddətli kreditor borcları": {"account_number": "538"}
@@ -342,7 +342,7 @@
             "76 - Fövqəladə xərclər": {
                 "account_number": "76",
                 "is_group": 1,
-                "761 - Fövqəladə xərclər": {"account_number": "751"}
+                "761 - Fövqəladə xərclər": {"account_number": "761"}
             }
         },
         "8 - MƏNFƏƏTLƏR (ZƏRƏRLƏR)": {

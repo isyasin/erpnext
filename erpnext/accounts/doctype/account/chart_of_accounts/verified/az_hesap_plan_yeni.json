@@ -88,7 +88,7 @@
                 "202 - İstehsalat xərcləri": {"account_number": "202"},
                 "203 - Tikinti müqavilələri üzrə bitməmiş tikinti işləri": {"account_number": "203"},
                 "204 - Hazır məhsul": {"account_number": "204"},
-                "205 - Mallar": {"account_number": "205"},
+                "205 - Mallar": {"account_number": "205", "account_type":"Stock"},
                 "206 - Satış məqsədi ilə saxlanılan digər aktivlər": {"account_number": "206"},
                 "207 - Digər ehtiyatlar": {"account_number": "207"},
                 "208 - Ehtiyatların dəyərinin azalmasına görə düzəlişlər": {"account_number": "208"}

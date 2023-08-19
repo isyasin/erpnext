@@ -1,0 +1,375 @@
+{
+    "country_code": "az",
+    "name": "AZ - Hesaplar planı (YENİ)",
+    "tree": {
+        "1 - UZUNMÜDDƏTLİ AKTİVLƏR":{
+            "root_type": "Asset",
+            "account_number":"1",
+            "is_group": 1,
+            "10 - Qeyri-maddi aktivlər":{
+                "account_number": "10",
+                "is_group": 1,
+                "101 - Qeyri-maddi aktivlər - Dəyər":{"account_number": "101"},
+                "102 - Qeyri-maddi aktivlər - Amortizasiya":{"account_number": "102"},
+                "103 - Qeyri-maddi aktivlərlə bağlı məsrəflərin kapitallaşdırılması":{"account_number": "103"}
+            },
+            "11 - Torpaq, tikili və avadanlıqlar":{
+                "account_number": "11",
+                "is_group": 1,
+                "111 - Torpaq, tikili və avadanlıqlar - Dəyər":{"account_number": "111"},
+                "112 - Torpaq, tikili və avadanlıqlar - Amortizasiya":{"account_number": "112"},
+                "113 - Torpaq, tikili və avadanlıqlarla bağlı məsrəflərin kapitallaşdırılması":{"account_number": "113"}
+            },
+            "12 - Daşınmaz əmlaka investisiyalar":{
+                "account_number": "12",
+                "is_group": 1,
+                "121 - Daşınmaz əmlaka investisiyalar - Dəyər": {"account_number": "121"},
+                "122 - Daşınmaz əmlaka investisiyalar - Amortizasiya": {"account_number": "122"}
+            },
+            "13 - Bioloji aktivlər":{
+                "account_number": "13",
+                "is_group": 1,
+                "131 - Bioloji aktivlər - Dəyər": {"account_number": "131"},
+                "132 - Bioloji aktivlər - Amortizasiya": {"account_number": "132"}
+            },
+            "14 - Təbii sərvətlər": {
+                "account_number": "14",
+                "is_group": 1,
+                "141 - Təbii sərvətlər - Dəyər": {"account_number": "141"},
+                "142 - Təbii sərvətlər - Tükənməsi": {"account_number": "142"}
+            },
+            "15 - İştirak payı metodu ilə uçota alınmış investisiyalar": {
+                "account_number": "15",
+                "is_group": 1,
+                "151 - Asılı müəssisələrə investisiyalar": {"account_number": "151"},
+                "152 - Birgə müəssisələrə investisiyalar": {"account_number": "152"}
+            },
+            "16 - Təxirə salınmış vergi aktivləri": {
+                "account_number": "16",
+                "is_group": 1,
+                "161 - Mənfəət vergisi üzrə təxirə salınmış vergi aktivləri": {"account_number": "161"},
+                "162 - Digər təxirə salınmış vergi aktivləri": {"account_number": "162"}
+            },
+            "17 - Uzunmüddətli debitor borcları": {
+                "account_number": "17",
+                "is_group": 1,
+                "171 - Alıcıların və sifarişçilərin uzunmüddətli debitor borcları": {"account_number": "171"},
+                "172 - Törəmə (asılı) müəssisələrin uzunmüddətli debitor borcları": {"account_number": "172"},
+                "173 - İşçi heyətinin uzunmüddətli debitor borcları": {"account_number": "173"},
+                "174 - İcarə üzrə uzunmüddətli debitor borcları": {"account_number": "174"},
+                "175 - Tikinti müqavilələri üzrə uzunmüddətli debitor borcları": {"account_number": "175"},
+                "176 - Faizlər üzrə uzunmüddətli debitor borcları": {"account_number": "176"},
+                "177 - Digər uzunmü,ddətli debitor borcları": {"account_number": "177"}
+            },
+            "18 - Sair uzunmüddətli maliyyə aktivləri": {
+                "account_number": "18",
+                "is_group": 1,
+                "181 - Ödənişə qədər saxlanılan uzunmüddətli investisiyalar": {"account_number": "181"},
+                "182 - Uzunmüddətli verilmiş borclar": {"account_number": "182"},
+                "183 - Digər uzunmüddətli investisiyalar": {"account_number": "183"},
+                "184 - Sair uzunmüddətli maliyyə aktivlərinin dəyərinin azalmasına görə düzəliş": {"account_number": "184"}
+            },
+            "19 - Sair uzunmüddətli aktivlər": {
+                "account_number": "19",
+                "is_group": 1,
+                "191 - Gələcək dövrlərin xərcləri": {"account_number": "191"},
+                "192 - Verilmiş uzunmüddətli avanslar": {"account_number": "192"},
+                "193 - Digər uzunmüddətli aktivlər": {"account_number": "193"}
+            }
+        },
+        "2 - QISAMÜDDƏTLİ AKTİVLƏR": {
+            "root_type": "Asset",
+            "account_number":"2",
+            "is_group": 1,
+            "20 - Ehtiyatlar": {
+                "account_number": "20",
+                "is_group": 1,
+                "201 - Xammal və materiallar": {"account_number": "201"},
+                "202 - İstehsalat xərcləri": {"account_number": "202"},
+                "203 - Tikinti müqavilələri üzrə bitməmiş tikinti işləri": {"account_number": "203"},
+                "204 - Hazır məhsul": {"account_number": "204"},
+                "205 - Mallar": {"account_number": "205", "account_type":"Stock"},
+                "206 - Satış məqsədi ilə saxlanılan digər aktivlər": {"account_number": "206"},
+                "207 - Digər ehtiyatlar": {"account_number": "207"},
+                "208 - Ehtiyatların dəyərinin azalmasına görə düzəlişlər": {"account_number": "208"}
+            },
+            "21 - Qısamüddətli debitor borcları": {
+                "account_number": "21",
+                "is_group": 1,
+                "211 - Alıcıların və sifarişçilərin qısamüddətli debitor borcları": {"account_number": "211", "account_type":"Receivable"},
+                "212 - Törəmə (asılı) müəssisələrin qısamüddətli debitor borcları": {"account_number": "212"},
+                "213 - İşçi heyətinin qısamüddətli debitor borcları": {"account_number": "213"},
+                "214 - İcarə üzrə qısamüddətli debitor borcları": {"account_number": "214"},
+                "215 - Tikinti müqavilələri üzrə qısamüddətli debitor borcları": {"account_number": "215"},
+                "216 - Faizlər üzrə qısamüddətli debitor borcları": {"account_number": "216"},
+                "217 - Digər qısamüddətli debitor borcları": {"account_number": "217"},
+                "218 - Şübhəli borclar üzrə düzəlişlər": {"account_number": "218"}
+            },
+            "22 - Pul vəsaitləri və onların ekvivalentləri": {
+                "account_number": "22",
+                "is_group": 1,
+                "221 - Kassa": {"account_number": "221", "account_type":"Cash"},
+                "222 - Yolda olan pul köçürmələri": {"account_number": "222"},
+                "223 - Bank hesablaşma hesabları": {"account_number": "223", "account_type":"Bank"},
+                "224 - Digər tələbli bank hesabları": {"account_number": "224"},
+                "225 - Pul vəsaitlərinin ekvivalentləri": {"account_number": "225"}
+            },
+            "23 - Sair qısamüddətli maliyyə aktivləri": {
+                "account_number": "23",
+                "is_group": 1,
+                "231 - Satış məqsədilə saxlanılan qısamüddətli investisiyalar": {"account_number": "231"},
+                "232 - Ödənişə qədər saxlanılan qısamüddətli investisiyalar": {"account_number": "232"},
+                "233 - Qısamüddətli verilmiş borclar": {"account_number": "233"},
+                "234 - Digər qısamüddətli investisiyalar": {"account_number": "234"},
+                "235 - Sair qısamüddətli maliyyə aktivlərinin dəyərinin azalmasına görə düzəlişlər": {"account_number": "235"}
+            },
+            "24 - Sair qısamüddətli aktivlər": {
+                "account_number": "24",
+                "is_group": 1,
+                "241 - Əvəzləşdirilən ƏDV": {"account_number": "241"},
+                "242 - Gələcək hesabat dövrünün xərcləri": {"account_number": "242"},
+                "243 - Verilmiş qısamüddətli avanslar": {"account_number": "243"},
+                "244 - Təhtəlhesab məbləğlər": {"account_number": "244"},
+                "245 - Digər qısamüddətli aktivlər": {"account_number": "245"}
+            }
+        },
+        "3 - KAPİTAL": {
+            "root_type": "Asset",
+            "account_number":"3",
+            "is_group": 1,
+            "30 - Ödənilmiş nominal (nizamnamə) kapital": {
+                "account_number": "30",
+                "is_group": 1,
+                "301 - Nominal (nizamnamə) kapital": {"account_number": "301"},
+                "302 - Nominal (nizamnamə) kapitalın ödənilməmiş hissəsi": {"account_number": "302"}
+            },
+            "31 - Emissiya gəliri": {
+                "account_number": "31",
+                "is_group": 1,
+                "311 - Emissiya gəliri": {"account_number": "311"}
+            },
+            "32 - Geri alınmış kapital (səhmlər)": {
+                "account_number": "32",
+                "is_group": 1,
+                "321 - Geri alınmış kapital (səhmlər)": {"account_number": "321"}
+            },
+            "33 - Kapital ehtiyatları": {
+                "account_number": "33",
+                "is_group": 1,
+                "331 - Yenidən qiymətləndirilmə üzrə ehtiyat": {"account_number": "331"},
+                "332 - Məzənnə fərgləri üzrə ehtiyat": {"account_number": "332"},
+                "333 - Qanunvericilik üzrə ehtiyat": {"account_number": "333"},
+                "334 - Nizamnamə üzrə ehtiyat": {"account_number": "334"},
+                "335 - Digər ehtiyatlar": {"account_number": "335"}
+            },
+            "34 - Bölüşdürülməmiş mənfəət (ödənilməmiş zərər)": {
+                "account_number": "34",
+                "is_group": 1,
+                "341 - Hesabat dövründə xalis mənfəət (zərər)": {"account_number": "341"},
+                "342 - Mühasibat uçotu siyasətində dəyişikliklərlə bağlı mənfəət (zərər) üzrə düzəlişlər": {"account_number": "342"},
+                "343 - Keçmiş illər üzrə bölühdürülməmiş mənfəət (ödənilməmiş zərər)": {"account_number": "343"},
+                "344 - Elan edilmiş dividentlər": {"account_number": "344"}
+            }
+        },
+        "4 - UZUNMÜDDƏTLİ ÖHDƏLİKLƏR": {
+            "root_type": "Liability",
+            "account_number":"4",
+            "is_group": 1,
+            "40 - Uzunmüddətli faiz xərcləri yaradan öhdəliklər": {
+                "account_number": "40",
+                "is_group": 1,
+                "401 - Uzunmüddətli bank kreditləri": {"account_number": "401"},
+                "402 - İşçilər üçün uzunmüddətli bank kreditləri": {"account_number": "402"},
+                "403 - Uzunmüddətli konvertasiya olunan istiqrazlar": {"account_number": "403"},
+                "404 - Uzunmüddətli borclar": {"account_number": "404"},
+                "405 - Geri alınan məhdud tədavül müddətli imtiyazlı səhmlər(uzunmüddətli)": {"account_number": "405"},
+                "406 - Maliyyə icarəsi üzrə uzunmüddətli öhdəliklər": {"account_number": "406"},
+                "407 - Törəmə(asılı) müəssisələrə uzunmüddətli faiz xərcləri yaradan öhdəliklər": {"account_number": "407"},
+                "408 - Digər uzunmüddətli faiz xərcləri yaradan öhdəliklər": {"account_number": "408"}
+            },
+            "41 - Uzunmüddətli qiymətləndirilmiş öhdəliklər": {
+                "account_number": "41",
+                "is_group": 1,
+                "411 - İşdən azad olma ilə bağlı uzunmüddətli müavinətlər və öhdəliklər": {"account_number": "411"},
+                "412 - Uzunmüddətli zəmanət öhdəlikləri": {"account_number": "412"},
+                "413 - Uzunmüddətli hüquqi öhdəliklər": {"account_number": "413"},
+                "414 - Digər uzunmüddətli qiymətləndirilmiş öhdəliklər": {"account_number": "414"}
+            },
+            "42 - Təxirə salınmış vergi öhdəlikləri": {
+                "account_number": "42",
+                "is_group": 1,
+                "421 - Mənfəət vergisi üzrə təxirə salınmış vergi öhdəlikləri": {"account_number": "421"},
+                "422 - Digər təxirə salınmış vergi öhdəliklər": {"account_number": "422"}
+            },
+            "43 - Uzunmüddətli kreditor borcları": {
+                "account_number": "43",
+                "is_group": 1,
+                "431 - Malsatan və podratçılara uzunmüddətli kreditor borcları": {"account_number": "431"},
+                "432 - Törəmə(asılı) müəssisələrə uzunmüddətli kreditor borcları": {"account_number": "432"},
+                "433 - Tikinti müqavilələri üzrə uzunmüddətli kreditor borcları": {"account_number": "433"},
+                "434 - Faizlər üzrə uzunmüddətli kreditor borcları": {"account_number": "434"},
+                "435 - Digər uzunmüddətli kreditor borcları": {"account_number": "435"}
+            },
+            "44 - Sair uzunmüddətli öhdəliklər": {
+                "account_number": "44",
+                "is_group": 1,
+                "441 - Uzunmüddətli pensiya öhdəlikləri": {"account_number": "441"},
+                "442 - Gələcək hesabat dövrlərin gəlirləri": {"account_number": "442"},
+                "443 - Alınmış uzunmüddətli avanslar": {"account_number": "443"},
+                "444 - Uzunmüddətli məqsədli maliyyələşmələr və daxilolmalar": {"account_number": "444"},
+                "445 - Digər uzunmüddətli öhdəliklər": {"account_number": "445"}
+            }
+        },
+        "5 - QISAMÜDDƏTLİ ÖHDƏLİKLƏR": {
+            "root_type": "Liability",
+            "account_number":"5",
+            "is_group": 1,
+            "50 - Qısamüddətli faiz xərcləri yaradan öhdəliklər": {
+                "account_number": "50",
+                "is_group": 1,
+                "501 - Qısamüddətli bank kreditləri": {"account_number": "501"},
+                "502 - İşçilər üçün qısamüddətli bank kreditləri": {"account_number": "502"},
+                "503 - Qısamüddətli konvertasiya olunan istiqrazlar": {"account_number": "503"},
+                "504 - Qısamüddətli borclar": {"account_number": "504"},
+                "505 - Geri alınan məhdud tədavül müddətli imtiyazlı səhmlər(qısamüddətli)": {"account_number": "505"},
+                "506 - Törəmə(asılı) müəssisələrə qısamüddətli faiz xərcləri yaradan öhdəliklər": {"account_number": "506"},
+                "507 - Digər qısamüddətli faiz xərcləri yaradan öhdəliklər": {"account_number": "507"}
+            },
+            "51 - Qısamüddətli qiymətləndirilmiş öhdəliklər": {
+                "account_number": "51",
+                "is_group": 1,
+                "511 - İşdən azad olma ilə bağlı qısamüddətli müavinətlər və öhdəliklər": {"account_number": "511"},
+                "512 - Qısamüddətli zəmanət öhdəlikləri": {"account_number": "512"},
+                "513 - Qısamüddətli hüquqi öhdəliklər": {"account_number": "513"},
+                "514 - Mənfəətdə iştirak planı və müavinət planları": {"account_number": "514"},
+                "515 - Digər qısamüddətli qiymətləndirilmiş öhdəliklər": {"account_number": "515"}
+            },
+            "52 - Vergi və sair məcburi ödənişlər üzrə öhdəliklər": {
+                "account_number": "52",
+                "is_group": 1,
+                "521 - Vergi öhdəlikləri": {"account_number": "521"},
+                "522 - Sosial sığorta və təminat üzrə öhdəliklər": {"account_number": "522"},
+                "523 - Digər məcburi ödənişlər üzrə öhdəliklər": {"account_number": "523"}
+            },
+            "53 - Qısamüddətli kreditor borcları": {
+                "account_number": "53",
+                "is_group": 1,
+                "531 - Malsatan və podratçılara qısamüddətli kreditor borcları": {"account_number": "531", "account_type":"Payable"},
+                "532 - Törəmə(asılı) müəssisələrə qısamüddətli kreditor borcları": {"account_number": "532"},
+                "533 - İşçi heyətinə qısamüddətli kreditor borcları": {"account_number": "533"},
+                "534 - Dividendlərin ödənilməsi üzrə təsisçilərə kreditor borcları": {"account_number": "534"},
+                "535 - İcarə üzrə qısamüddətli kreditor borcları": {"account_number": "535"},
+                "536 - Tikinti müqavilələri üzrə qısamüddətli kreditor borcları": {"account_number": "536"},
+                "537 - Faizlər üzrə qısamüddətli kreditor borcları": {"account_number": "537"},
+                "538 - Digər qısamüddətli kreditor borcları": {"account_number": "538"}
+            },
+            "54 - Sair qısamüddətli öhdəliklər": {
+                "account_number": "54",
+                "is_group": 1,
+                "541 - Qısamüddətli pensiya öhdəlikləri": {"account_number": "541"},
+                "542 - Gələcək hesabat dövrünün gəlirləri": {"account_number": "542"},
+                "543 - Alınmış qısamüddətli avanslar": {"account_number": "543"},
+                "544 - Qisamüddətli məqsədli maliyyələşmələr və daxilolmalar": {"account_number": "544"},
+                "545 - Digər qısamüddətli öhdəliklər": {"account_number": "545"}
+            }
+        },
+        "6 - GƏLİRLƏR": {
+            "root_type": "Income",
+            "account_number":"6",
+            "is_group": 1,
+            "60 - Əsas əməliyyat gəliri": {
+                "account_number": "60",
+                "is_group": 1,
+                "601 - Satış": {"account_number": "601", "account_type":"Income Account"},
+                "602 - Satılmış malların qaytarılması və ucuzlaşdırılması": {"account_number": "602"},
+                "603 - Verilmiş güzəştlər": {"account_number": "603"}
+            },
+            "61 - Sair əməliyyat gəlirləri": {
+                "account_number": "61",
+                "is_group": 1,
+                "611 - Sair əməliyyat gəlirləri": {"account_number": "611"}
+            },
+            "62 - Fəaliyyətin dayandırılmasından mənfəətlər":{
+                "account_number": "62",
+                "is_group": 1,
+                "621 - Fəaliyyətin dayandırılmasından mənfəətlər": {"account_number": "621"}
+            },
+            "63 - Maliyyə gəlirləri": {
+                "account_number": "63",
+                "is_group": 1,
+                "631 - Maliyyə gəlirləri": {"account_number": "631"}
+            },
+            "64 - Fövqəladə gəlirlər": {
+                "account_number": "64",
+                "is_group": 1,
+                "641 - Fövqəladə gəlirlər": {"account_number": "641"}
+            }
+        },
+        "7 - XƏRCLƏR": {
+            "root_type": "Expense",
+            "account_number":"7",
+            "is_group": 1,
+            "70 - Satışın maya dəyəri": {
+                "account_number": "70",
+                "is_group": 1,
+                "701 - Satışın maya dəyəri": {"account_number": "701", "account_type":"Cost of Goods Sold"}
+            },
+            "71 - Kommersiya xərcləri": {
+                "account_number": "71",
+                "is_group": 1,
+                "711 - Kommersiya xərcləri": {"account_number": "711"}
+            },
+            "72 - İnzibati xərclər": {
+                "account_number": "72",
+                "is_group": 1,
+                "721 - İnzibati xərclər": {"account_number": "721"}
+            },
+            "73 - Sair əməliyyat xərcləri": {
+                "account_number": "73",
+                "is_group": 1,
+                "731 - Sair əməliyyat xərcləri": {"account_number": "731"}
+            },
+            "74 - Fəaliyyətin dayandırılmasından zərərlər": {
+                "account_number": "74",
+                "is_group": 1,
+                "741 - Fəaliyyətin dayandırılmasından zərərlər": {"account_number": "741"}
+            },
+            "75 - Maliyyə xərcləri": {
+                "account_number": "75",
+                "is_group": 1,
+                "751 - Maliyyə xərcləri": {"account_number": "751"}
+            },
+            "76 - Fövqəladə xərclər": {
+                "account_number": "76",
+                "is_group": 1,
+                "761 - Fövqəladə xərclər": {"account_number": "761"}
+            }
+        },
+        "8 - MƏNFƏƏTLƏR (ZƏRƏRLƏR)": {
+            "root_type": "Equity",
+            "account_number":"8",
+            "is_group": 1,
+            "80 - Ümumi mənfəət (zərər)": {
+                "account_number": "80",
+                "is_group": 1,
+                "801 - Ümumi mənfəət (zərər)": {"account_number": "801"}
+            },
+            "81 - Asılı və birgə müəssisələrin mənfəətlərində(zərərlərində) pay": {
+                "account_number": "81",
+                "is_group": 1,
+                "811 - Asılı və birgə müəssisələrin mənfəətlərində(zərərlərində) pay": {"account_number": "811"}
+            }
+        },
+        "9 - MƏNFƏƏT VERGİSİ": {
+            "root_type": "Equity",
+            "account_number":"9",
+            "is_group": 1,
+            "90 - Mənfəət vergisi": {
+                "account_number": "90",
+                "is_group": 1,
+                "901 - Cari mənfəət vergisi üzrə xərclər": {"account_number": "901"},
+                "902 - Təxirə salınmış mənfəət vergisi üzrə xərclər": {"account_number": "902"}
+            }
+        }
+    } 
+}

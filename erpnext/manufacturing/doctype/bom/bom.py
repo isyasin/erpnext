@@ -661,6 +661,9 @@ class BOM(WebsiteGenerator):
 		base_total_rm_cost = 0
 
 		for d in self.get("items"):
+			if not d.is_stock_item and self.rm_cost_as_per == "Valuation Rate":
+				continue
+
 			old_rate = d.rate
 			d.rate = self.get_rm_rate(
 				{
@@ -1306,7 +1309,7 @@ def item_query(doctype, txt, searchfield, start, page_len, filters):
 
 	order_by = "idx desc, name, item_name"
 
-	fields = ["name", "item_group", "item_name", "description"]
+	fields = ["name", "item_name", "item_group", "description"]
 	fields.extend(
 		[field for field in searchfields if not field in ["name", "item_group", "description"]]
 	)

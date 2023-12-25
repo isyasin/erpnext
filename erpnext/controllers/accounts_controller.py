@@ -70,6 +70,10 @@ class AccountMissingError(frappe.ValidationError):
 	pass
 
 
+class InvalidQtyError(frappe.ValidationError):
+	pass
+
+
 force_item_fields = (
 	"item_group",
 	"brand",
@@ -161,6 +165,7 @@ class AccountsController(TransactionBase):
 		self.disable_pricing_rule_on_internal_transfer()
 		self.disable_tax_included_prices_for_internal_transfer()
 		self.set_incoming_rate()
+		self.init_internal_values()
 
 		if self.meta.get_field("currency"):
 			self.calculate_taxes_and_totals()
@@ -220,6 +225,16 @@ class AccountsController(TransactionBase):
 
 		self.set_total_in_words()
 
+	def init_internal_values(self):
+		# init all the internal values as 0 on sa
+		if self.docstatus.is_draft():
+			# TODO: Add all such pending values here
+			fields = ["billed_amt", "delivered_qty"]
+			for item in self.get("items"):
+				for field in fields:
+					if hasattr(item, field):
+						item.set(field, 0)
+
 	def before_cancel(self):
 		validate_einvoice_fields(self)
 
@@ -238,7 +253,7 @@ class AccountsController(TransactionBase):
 				references_map.setdefault(x.parent, []).append(x.name)
 
 			for doc, rows in references_map.items():
-				unreconcile_doc = frappe.get_doc("Unreconcile Payments", doc)
+				unreconcile_doc = frappe.get_doc("Unreconcile Payment", doc)
 				for row in rows:
 					unreconcile_doc.remove(unreconcile_doc.get("allocations", {"name": row})[0])
 
@@ -247,9 +262,9 @@ class AccountsController(TransactionBase):
 				unreconcile_doc.save(ignore_permissions=True)
 
 		# delete docs upon parent doc deletion
-		unreconcile_docs = frappe.db.get_all("Unreconcile Payments", filters={"voucher_no": self.name})
+		unreconcile_docs = frappe.db.get_all("Unreconcile Payment", filters={"voucher_no": self.name})
 		for x in unreconcile_docs:
-			_doc = frappe.get_doc("Unreconcile Payments", x.name)
+			_doc = frappe.get_doc("Unreconcile Payment", x.name)
 			if _doc.docstatus == 1:
 				_doc.cancel()
 			_doc.delete()
@@ -625,6 +640,7 @@ class AccountsController(TransactionBase):
 
 					args["doctype"] = self.doctype
 					args["name"] = self.name
+					args["child_doctype"] = item.doctype
 					args["child_docname"] = item.name
 					args["ignore_pricing_rule"] = (
 						self.ignore_pricing_rule if hasattr(self, "ignore_pricing_rule") else 0
@@ -895,10 +911,16 @@ class AccountsController(TransactionBase):
 		return gl_dict
 
 	def validate_qty_is_not_zero(self):
-		if self.doctype != "Purchase Receipt":
-			for item in self.items:
-				if not item.qty:
-					frappe.throw(_("Item quantity can not be zero"))
+		if self.doctype == "Purchase Receipt":
+			return
+
+		for item in self.items:
+			if not flt(item.qty):
+				frappe.throw(
+					msg=_("Row #{0}: Item quantity cannot be zero").format(item.idx),
+					title=_("Invalid Quantity"),
+					exc=InvalidQtyError,
+				)
 
 	def validate_account_currency(self, account, account_currency=None):
 		valid_currency = [self.company_currency]
@@ -2494,6 +2516,7 @@ def get_advance_payment_entries(
 	against_all_orders=False,
 	limit=None,
 	condition=None,
+	payment_name=None,
 ):
 	party_account_field = "paid_from" if party_type == "Customer" else "paid_to"
 	currency_field = (
@@ -2516,6 +2539,10 @@ def get_advance_payment_entries(
 			reference_condition = ""
 			order_list = []
 
+		payment_name_filter = ""
+		if payment_name:
+			payment_name_filter = " and t1.name like '%%{0}%%'".format(payment_name)
+
 		if not condition:
 			condition = ""
 
@@ -2530,7 +2557,7 @@ def get_advance_payment_entries(
 			where
 				t1.name = t2.parent and t1.{1} = %s and t1.payment_type = %s
 				and t1.party_type = %s and t1.party = %s and t1.docstatus = 1
-				and t2.reference_doctype = %s {2} {3}
+				and t2.reference_doctype = %s {2} {3} {6}
 			order by t1.posting_date {4}
 		""".format(
 				currency_field,
@@ -2539,12 +2566,17 @@ def get_advance_payment_entries(
 				condition,
 				limit_cond,
 				exchange_rate_field,
+				payment_name_filter,
 			),
 			[party_account, payment_type, party_type, party, order_doctype] + order_list,
 			as_dict=1,
 		)
 
 	if include_unallocated:
+		payment_name_filter = ""
+		if payment_name:
+			payment_name_filter = " and name like '%%{0}%%'".format(payment_name)
+
 		unallocated_payment_entries = frappe.db.sql(
 			"""
 				select 'Payment Entry' as reference_type, name as reference_name, posting_date,
@@ -2552,10 +2584,15 @@ def get_advance_payment_entries(
 				from `tabPayment Entry`
 				where
 					{0} = %s and party_type = %s and party = %s and payment_type = %s
-					and docstatus = 1 and unallocated_amount > 0 {condition}
+					and docstatus = 1 and unallocated_amount > 0 {condition} {4}
 				order by posting_date {1}
 			""".format(
-				party_account_field, limit_cond, exchange_rate_field, currency_field, condition=condition or ""
+				party_account_field,
+				limit_cond,
+				exchange_rate_field,
+				currency_field,
+				payment_name_filter,
+				condition=condition or "",
 			),
 			(party_account, party_type, party, payment_type),
 			as_dict=1,
@@ -2864,6 +2901,9 @@ def validate_and_delete_children(parent, data) -> bool:
 		d.cancel()
 		d.delete()
 
+	if parent.doctype == "Purchase Order":
+		parent.update_ordered_qty_in_so_for_removed_items(deleted_children)
+
 	# need to update ordered qty in Material Request first
 	# bin uses Material Request Items to recalculate & update
 	parent.update_prevdoc_status()
@@ -3023,16 +3063,19 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 		conv_fac_precision = child_item.precision("conversion_factor") or 2
 		qty_precision = child_item.precision("qty") or 2
 
-		if flt(child_item.billed_amt, rate_precision) > flt(
-			flt(d.get("rate"), rate_precision) * flt(d.get("qty"), qty_precision), rate_precision
-		):
+		# Amount cannot be lesser than billed amount, except for negative amounts
+		row_rate = flt(d.get("rate"), rate_precision)
+		amount_below_billed_amt = flt(child_item.billed_amt, rate_precision) > flt(
+			row_rate * flt(d.get("qty"), qty_precision), rate_precision
+		)
+		if amount_below_billed_amt and row_rate > 0.0:
 			frappe.throw(
 				_("Row #{0}: Cannot set Rate if amount is greater than billed amount for Item {1}.").format(
 					child_item.idx, child_item.item_code
 				)
 			)
 		else:
-			child_item.rate = flt(d.get("rate"), rate_precision)
+			child_item.rate = row_rate
 
 		if d.get("conversion_factor"):
 			if child_item.stock_uom == child_item.uom:
@@ -3116,7 +3159,10 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 
 	if parent_doctype == "Purchase Order":
 		update_last_purchase_rate(parent, is_submit=1)
-		parent.update_prevdoc_status()
+
+		if any_qty_changed or items_added_or_removed or any_conversion_factor_changed:
+			parent.update_prevdoc_status()
+
 		parent.update_requested_qty()
 		parent.update_ordered_qty()
 		parent.update_ordered_and_reserved_qty()

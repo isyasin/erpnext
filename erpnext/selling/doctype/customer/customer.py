@@ -171,6 +171,7 @@ class Customer(TransactionBase):
 
 		if self.flags.is_new_doc:
 			self.link_lead_address_and_contact()
+			self.copy_communication()
 
 		self.update_customer_groups()
 
@@ -223,6 +224,17 @@ class Customer(TransactionBase):
 				if not linked_doc.has_link("Customer", self.name):
 					linked_doc.append("links", dict(link_doctype="Customer", link_name=self.name))
 					linked_doc.save(ignore_permissions=self.flags.ignore_permissions)
+
+	def copy_communication(self):
+		if not self.lead_name or not frappe.db.get_single_value(
+			"CRM Settings", "carry_forward_communication_and_comments"
+		):
+			return
+
+		from erpnext.crm.utils import copy_comments, link_communications
+
+		copy_comments("Lead", self.lead_name, self)
+		link_communications("Lead", self.lead_name, self)
 
 	def validate_name_with_customer_group(self):
 		if frappe.db.exists("Customer Group", self.name):
@@ -690,8 +702,12 @@ def make_contact(args, is_primary_contact=1):
 		"is_primary_contact": is_primary_contact,
 		"links": [{"link_doctype": args.get("doctype"), "link_name": args.get("name")}],
 	}
-	if args.customer_type == "Individual":
-		first, middle, last = parse_full_name(args.get("customer_name"))
+
+	party_type = args.customer_type if args.doctype == "Customer" else args.supplier_type
+	party_name_key = "customer_name" if args.doctype == "Customer" else "supplier_name"
+
+	if party_type == "Individual":
+		first, middle, last = parse_full_name(args.get(party_name_key))
 		values.update(
 			{
 				"first_name": first,
@@ -702,9 +718,13 @@ def make_contact(args, is_primary_contact=1):
 	else:
 		values.update(
 			{
-				"company_name": args.get("customer_name"),
+				"first_name": args.get("customer_name")
+				if args.doctype == "Customer"
+				else args.get("supplier_name"),
+				"company_name": args.get(party_name_key),
 			}
 		)
+
 	contact = frappe.get_doc(values)
 
 	if args.get("email_id"):
@@ -733,10 +753,12 @@ def make_address(args, is_primary_address=1, is_shipping_address=1):
 			title=_("Missing Values Required"),
 		)
 
+	party_name_key = "customer_name" if args.doctype == "Customer" else "supplier_name"
+
 	address = frappe.get_doc(
 		{
 			"doctype": "Address",
-			"address_title": args.get("customer_name"),
+			"address_title": args.get(party_name_key),
 			"address_line1": args.get("address_line1"),
 			"address_line2": args.get("address_line2"),
 			"city": args.get("city"),

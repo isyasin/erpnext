@@ -682,7 +682,7 @@ def update_reference_in_payment_entry(
 	payment_entry.setup_party_account_field()
 	payment_entry.set_missing_values()
 	if not skip_ref_details_update_for_pe:
-		payment_entry.set_missing_ref_details()
+		payment_entry.set_missing_ref_details(ref_exchange_rate=d.exchange_rate or None)
 	payment_entry.set_amounts()
 
 	payment_entry.make_exchange_gain_loss_journal(
@@ -1372,8 +1372,7 @@ def sort_stock_vouchers_by_posting_date(
 		.select(sle.voucher_type, sle.voucher_no, sle.posting_date, sle.posting_time, sle.creation)
 		.where((sle.is_cancelled == 0) & (sle.voucher_no.isin(voucher_nos)))
 		.groupby(sle.voucher_type, sle.voucher_no)
-		.orderby(sle.posting_date)
-		.orderby(sle.posting_time)
+		.orderby(sle.posting_datetime)
 		.orderby(sle.creation)
 	).run(as_dict=True)
 	sorted_vouchers = [(sle.voucher_type, sle.voucher_no) for sle in sles]

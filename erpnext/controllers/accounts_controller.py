@@ -85,7 +85,6 @@ force_item_fields = (
 	"brand",
 	"stock_uom",
 	"is_fixed_asset",
-	"item_tax_rate",
 	"pricing_rules",
 	"weight_per_unit",
 	"weight_uom",
@@ -743,7 +742,6 @@ class AccountsController(TransactionBase):
 						args["is_subcontracted"] = self.is_subcontracted
 
 					ret = get_item_details(args, self, for_validate=for_validate, overwrite_warehouse=False)
-
 					for fieldname, value in ret.items():
 						if item.meta.get_field(fieldname) and value is not None:
 							if item.get(fieldname) is None or fieldname in force_item_fields:
@@ -753,7 +751,10 @@ class AccountsController(TransactionBase):
 								fieldname
 							):
 								item.set(fieldname, value)
-
+							elif fieldname == "item_tax_rate" and not (
+								self.get("is_return") and self.get("return_against")
+							):
+								item.set(fieldname, value)
 							elif fieldname == "serial_no":
 								# Ensure that serial numbers are matched against Stock UOM
 								item_conversion_factor = item.get("conversion_factor") or 1.0
@@ -2489,16 +2490,12 @@ class AccountsController(TransactionBase):
 
 	@frappe.whitelist()
 	def repost_accounting_entries(self):
-		if self.repost_required:
-			repost_ledger = frappe.new_doc("Repost Accounting Ledger")
-			repost_ledger.company = self.company
-			repost_ledger.append("vouchers", {"voucher_type": self.doctype, "voucher_no": self.name})
-			repost_ledger.flags.ignore_permissions = True
-			repost_ledger.insert()
-			repost_ledger.submit()
-			self.db_set("repost_required", 0)
-		else:
-			frappe.throw(_("No updates pending for reposting"))
+		repost_ledger = frappe.new_doc("Repost Accounting Ledger")
+		repost_ledger.company = self.company
+		repost_ledger.append("vouchers", {"voucher_type": self.doctype, "voucher_no": self.name})
+		repost_ledger.flags.ignore_permissions = True
+		repost_ledger.insert()
+		repost_ledger.submit()
 
 
 @frappe.whitelist()

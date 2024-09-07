@@ -108,7 +108,10 @@
             "22 - Pul vəsaitləri və onların ekvivalentləri": {
                 "account_number": "22",
                 "is_group": 1,
-                "221 - Kassa": {"account_number": "221", "account_type":"Cash"},
+                "221 - Kassalar"{
+                    "account_number": "221","account_type":"Cash",
+                    "221-1 - Kassa":{"account_number": "221-1"}
+                },
                 "222 - Yolda olan pul köçürmələri": {"account_number": "222"},
                 "223 - Bank hesablaşma hesabları": {"account_number": "223", "account_type":"Bank"},
                 "224 - Digər tələbli bank hesabları": {"account_number": "224"},
@@ -134,7 +137,7 @@
             }
         },
         "3 - KAPİTAL": {
-            "root_type": "Asset",
+            "root_type": "Equity",
             "account_number":"3",
             "is_group": 1,
             "30 - Ödənilmiş nominal (nizamnamə) kapital": {

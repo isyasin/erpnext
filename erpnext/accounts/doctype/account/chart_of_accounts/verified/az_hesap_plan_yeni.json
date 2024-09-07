@@ -108,9 +108,9 @@
             "22 - Pul vəsaitləri və onların ekvivalentləri": {
                 "account_number": "22",
                 "is_group": 1,
-                "221 - Kassalar"{
+                "221 - Kassalar":{
                     "account_number": "221","account_type":"Cash",
-                    "221-1 - Kassa":{"account_number": "221-1"}
+                    "221-1 - Kassa":{"account_number": "221-1", "account_type":"Cash"}
                 },
                 "222 - Yolda olan pul köçürmələri": {"account_number": "222"},
                 "223 - Bank hesablaşma hesabları": {"account_number": "223", "account_type":"Bank"},

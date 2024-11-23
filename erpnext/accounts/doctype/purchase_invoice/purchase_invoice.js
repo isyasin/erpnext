@@ -25,6 +25,13 @@ erpnext.accounts.PurchaseInvoice = class PurchaseInvoice extends erpnext.buying.
 				}
 			};
 		});
+
+		this.frm.set_query("expense_account", "items", function () {
+			return {
+				query: "erpnext.controllers.queries.get_expense_account",
+				filters: { company: doc.company },
+			};
+		});
 	}
 
 	onload() {
@@ -57,25 +64,6 @@ erpnext.accounts.PurchaseInvoice = class PurchaseInvoice extends erpnext.buying.
 
 		if(doc.update_stock==1 && doc.docstatus==1) {
 			this.show_stock_ledger();
-		}
-
-		if (this.frm.doc.repost_required && this.frm.doc.docstatus===1) {
-			this.frm.set_intro(__("Accounting entries for this invoice need to be reposted. Please click on 'Repost' button to update."));
-			this.frm.add_custom_button(__('Repost Accounting Entries'),
-				() => {
-					this.frm.call({
-						doc: this.frm.doc,
-						method: 'repost_accounting_entries',
-						freeze: true,
-						freeze_message: __('Reposting...'),
-						callback: (r) => {
-							if (!r.exc) {
-								frappe.msgprint(__('Accounting Entries are reposted.'));
-								me.frm.refresh();
-							}
-						}
-					});
-				}).removeClass('btn-default').addClass('btn-warning');
 		}
 
 		if(!doc.is_return && doc.docstatus == 1 && doc.outstanding_amount != 0){
@@ -322,8 +310,11 @@ erpnext.accounts.PurchaseInvoice = class PurchaseInvoice extends erpnext.buying.
 				party_type: "Supplier",
 				account: this.frm.doc.credit_to,
 				price_list: this.frm.doc.buying_price_list,
-				fetch_payment_terms_template: cint(!this.frm.doc.ignore_default_payment_terms_template)
-			}, function() {
+				fetch_payment_terms_template: cint(
+					(this.frm.doc.is_return == 0) & !this.frm.doc.ignore_default_payment_terms_template
+				),
+			},
+			function () {
 				me.apply_pricing_rule();
 				me.frm.doc.apply_tds = me.frm.supplier_tds ? 1 : 0;
 				me.frm.doc.tax_withholding_category = me.frm.supplier_tds;
@@ -440,8 +431,12 @@ function hide_fields(doc) {
 
 	var item_fields_stock = ['warehouse_section', 'received_qty', 'rejected_qty'];
 
-	cur_frm.fields_dict['items'].grid.set_column_disp(item_fields_stock,
-		(cint(doc.update_stock)==1 || cint(doc.is_return)==1 ? true : false));
+	if (cur_frm.fields_dict["items"]) {
+		cur_frm.fields_dict["items"].grid.set_column_disp(
+			item_fields_stock,
+			cint(doc.update_stock) == 1 || cint(doc.is_return) == 1 ? true : false
+		);
+	}
 
 	cur_frm.refresh_fields();
 }
@@ -483,13 +478,6 @@ cur_frm.fields_dict['select_print_heading'].get_query = function(doc, cdt, cdn) 
 		]
 	}
 }
-
-cur_frm.set_query("expense_account", "items", function(doc) {
-	return {
-		query: "erpnext.controllers.queries.get_expense_account",
-		filters: {'company': doc.company }
-	}
-});
 
 cur_frm.set_query("wip_composite_asset", "items", function() {
 	return {

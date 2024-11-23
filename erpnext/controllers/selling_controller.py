@@ -23,15 +23,15 @@ class SellingController(StockController):
 		return _("To {0} | {1} {2}").format(self.customer_name, self.currency, self.grand_total)
 
 	def onload(self):
-		super(SellingController, self).onload()
+		super().onload()
 		if self.doctype in ("Sales Order", "Delivery Note", "Sales Invoice"):
 			for item in self.get("items") + (self.get("packed_items") or []):
 				item.update(get_bin_details(item.item_code, item.warehouse, include_child_warehouses=True))
 
 	def validate(self):
-		super(SellingController, self).validate()
+		super().validate()
 		self.validate_items()
-		if not self.get("is_debit_note"):
+		if not (self.get("is_debit_note") or self.get("is_return")):
 			self.validate_max_discount()
 		self.validate_selling_price()
 		self.set_qty_as_per_stock_uom()
@@ -44,7 +44,7 @@ class SellingController(StockController):
 		self.validate_auto_repeat_subscription_dates()
 
 	def set_missing_values(self, for_validate=False):
-		super(SellingController, self).set_missing_values(for_validate)
+		super().set_missing_values(for_validate)
 
 		# set contact and address details for customer, if they are not mentioned
 		self.set_missing_lead_customer_details(for_validate=for_validate)
@@ -167,6 +167,9 @@ class SellingController(StockController):
 
 		total = 0.0
 		sales_team = self.get("sales_team")
+
+		self.validate_sales_team(sales_team)
+
 		for sales_person in sales_team:
 			self.round_floats_in(sales_person)
 
@@ -185,6 +188,20 @@ class SellingController(StockController):
 
 		if sales_team and total != 100.0:
 			throw(_("Total allocated percentage for sales team should be 100"))
+
+	def validate_sales_team(self, sales_team):
+		sales_persons = [d.sales_person for d in sales_team]
+
+		if not sales_persons:
+			return
+
+		sales_person_status = frappe.db.get_all(
+			"Sales Person", filters={"name": ["in", sales_persons]}, fields=["name", "enabled"]
+		)
+
+		for row in sales_person_status:
+			if not row.enabled:
+				frappe.throw(_("Sales Person <b>{0}</b> is disabled.").format(row.name))
 
 	def validate_max_discount(self):
 		for d in self.get("items"):
@@ -284,7 +301,10 @@ class SellingController(StockController):
 
 			if flt(item.base_net_rate) < flt(last_valuation_rate_in_sales_uom):
 				throw_message(
-					item.idx, item.item_name, last_valuation_rate_in_sales_uom, "valuation rate (Moving Average)"
+					item.idx,
+					item.item_name,
+					last_valuation_rate_in_sales_uom,
+					"valuation rate (Moving Average)",
 				)
 
 	def get_item_list(self):
@@ -412,7 +432,8 @@ class SellingController(StockController):
 					"Cancelled"
 				]:
 					frappe.throw(
-						_("{0} {1} is cancelled or closed").format(_("Sales Order"), so), frappe.InvalidStatusError
+						_("{0} {1} is cancelled or closed").format(_("Sales Order"), so),
+						frappe.InvalidStatusError,
 					)
 
 				sales_order.update_reserved_qty(so_item_rows)
@@ -450,6 +471,16 @@ class SellingController(StockController):
 							"allow_zero_valuation": d.get("allow_zero_valuation"),
 						},
 						raise_error_if_no_rate=False,
+					)
+
+				if (
+					not d.incoming_rate
+					and self.get("return_against")
+					and self.get("is_return")
+					and get_valuation_method(d.item_code) == "Moving Average"
+				):
+					d.incoming_rate = get_rate_for_return(
+						self.doctype, self.name, d.item_code, self.return_against, item_row=d
 					)
 
 				# For internal transfers use incoming rate as the valuation rate
@@ -587,7 +618,8 @@ class SellingController(StockController):
 		if self.doctype in ["Sales Order", "Quotation"]:
 			for item in self.items:
 				item.gross_profit = flt(
-					((item.base_rate - flt(item.valuation_rate)) * item.stock_qty), self.precision("amount", item)
+					((flt(item.stock_uom_rate) - flt(item.valuation_rate)) * item.stock_qty),
+					self.precision("amount", item),
 				)
 
 	def set_customer_address(self):
@@ -664,9 +696,9 @@ class SellingController(StockController):
 			if d.get("target_warehouse") and d.get("warehouse") == d.get("target_warehouse"):
 				warehouse = frappe.bold(d.get("target_warehouse"))
 				frappe.throw(
-					_("Row {0}: Delivery Warehouse ({1}) and Customer Warehouse ({2}) can not be same").format(
-						d.idx, warehouse, warehouse
-					)
+					_(
+						"Row {0}: Delivery Warehouse ({1}) and Customer Warehouse ({2}) can not be same"
+					).format(d.idx, warehouse, warehouse)
 				)
 
 		if not self.get("is_internal_customer") and any(d.get("target_warehouse") for d in items):

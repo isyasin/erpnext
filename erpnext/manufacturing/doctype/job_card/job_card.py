@@ -309,6 +309,9 @@ class JobCard(Document):
 		return overlap
 
 	def get_time_logs(self, args, doctype, open_job_cards=None):
+		if args.get("remaining_time_in_mins") and get_datetime(args.from_time) >= get_datetime(args.to_time):
+			args.to_time = add_to_date(args.from_time, minutes=args.get("remaining_time_in_mins"))
+
 		jc = frappe.qb.DocType("Job Card")
 		jctl = frappe.qb.DocType(doctype)
 
@@ -354,8 +357,10 @@ class JobCard(Document):
 			else:
 				query = query.where(jc.name.isin(open_job_cards))
 
-		if doctype != "Job Card Time Log":
-			query = query.where(jc.total_time_in_mins == 0)
+		if doctype == "Job Card Time Log":
+			query = query.where(jc.docstatus < 2)
+		else:
+			query = query.where((jc.docstatus == 0) & (jc.total_time_in_mins == 0))
 
 		time_logs = query.run(as_dict=True)
 
@@ -412,7 +417,13 @@ class JobCard(Document):
 	def schedule_time_logs(self, row):
 		row.remaining_time_in_mins = row.time_in_mins
 		while row.remaining_time_in_mins > 0:
-			args = frappe._dict({"from_time": row.planned_start_time, "to_time": row.planned_end_time})
+			args = frappe._dict(
+				{
+					"from_time": row.planned_start_time,
+					"to_time": row.planned_end_time,
+					"remaining_time_in_mins": row.remaining_time_in_mins,
+				}
+			)
 
 			self.validate_overlap_for_workstation(args, row)
 			self.check_workstation_time(row)
@@ -941,26 +952,20 @@ class JobCard(Document):
 
 		qty = 0
 		if self.work_order:
-			doc = frappe.get_doc("Work Order", self.work_order)
 			if doc.transfer_material_against == "Job Card" and not doc.skip_transfer:
-				completed = True
+				min_qty = []
 				for d in doc.operations:
-					if d.status != "Completed":
-						completed = False
+					completed_qty = flt(d.completed_qty) + flt(d.process_loss_qty)
+					if completed_qty:
+						min_qty.append(completed_qty)
+					else:
+						min_qty = []
 						break
 
-				if completed:
-					job_cards = frappe.get_all(
-						"Job Card",
-						filters={"work_order": self.work_order, "docstatus": ("!=", 2)},
-						fields="sum(transferred_qty) as qty",
-						group_by="operation_id",
-					)
+				if min_qty:
+					qty = min(min_qty)
 
-					if job_cards:
-						qty = min(d.qty for d in job_cards)
-
-			doc.db_set("material_transferred_for_manufacturing", qty)
+				doc.db_set("material_transferred_for_manufacturing", qty)
 
 		self.set_status(update_status)
 

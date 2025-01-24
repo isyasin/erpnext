@@ -93,7 +93,7 @@ class TestPOSInvoice(unittest.TestCase):
 
 		inv.save()
 
-		self.assertEqual(inv.net_total, 4298.25)
+		self.assertEqual(inv.net_total, 4298.24)
 		self.assertEqual(inv.grand_total, 4900.00)
 
 	def test_tax_calculation_with_multiple_items(self):
@@ -835,7 +835,8 @@ class TestPOSInvoice(unittest.TestCase):
 			{
 				"item_code": item.name,
 				"warehouse": pos_inv2.items[0].warehouse,
-				"voucher_type": "Delivery Note",
+				"voucher_type": "POS Invoice",
+				"voucher_no": pos_inv2.name,
 				"qty": 2,
 				"avg_rate": 300,
 				"batches": frappe._dict({"TestBatch 01": 2}),

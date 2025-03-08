@@ -8,7 +8,7 @@ from collections import defaultdict
 import frappe
 from frappe import _, bold, qb, throw
 from frappe.model.workflow import get_workflow_name, is_transition_condition_satisfied
-from frappe.query_builder import Criterion
+from frappe.query_builder import Criterion, DocType
 from frappe.query_builder.custom import ConstantColumn
 from frappe.query_builder.functions import Abs, Sum
 from frappe.utils import (
@@ -158,7 +158,7 @@ class AccountsController(TransactionBase):
 			self.validate_qty_is_not_zero()
 
 		if (
-			self.doctype in ["Sales Invoice", "Purchase Invoice"]
+			self.doctype in ["Sales Invoice", "Purchase Invoice", "POS Invoice"]
 			and self.get("is_return")
 			and self.get("update_stock")
 		):
@@ -250,6 +250,7 @@ class AccountsController(TransactionBase):
 			apply_pricing_rule_on_transaction(self)
 
 		self.set_total_in_words()
+		self.validate_company_in_accounting_dimension()
 
 	def init_internal_values(self):
 		# init all the internal values as 0 on sa
@@ -354,6 +355,39 @@ class AccountsController(TransactionBase):
 			frappe.qb.from_(sle).delete().where(
 				(sle.voucher_type == self.doctype) & (sle.voucher_no == self.name)
 			).run()
+
+	def validate_company_in_accounting_dimension(self):
+		doc_field = DocType("DocField")
+		accounting_dimension = DocType("Accounting Dimension")
+		dimension_list = (
+			frappe.qb.from_(accounting_dimension)
+			.select(accounting_dimension.document_type)
+			.join(doc_field)
+			.on(doc_field.parent == accounting_dimension.document_type)
+			.where(doc_field.fieldname == "company")
+		).run(as_list=True)
+
+		dimension_list = sum(dimension_list, ["Project"])
+		self.validate_company(dimension_list)
+
+		for child in self.get_all_children() or []:
+			self.validate_company(dimension_list, child)
+
+	def validate_company(self, dimension_list, child=None):
+		for dimension in dimension_list:
+			if not child:
+				dimension_value = self.get(frappe.scrub(dimension))
+			else:
+				dimension_value = child.get(frappe.scrub(dimension))
+
+			if dimension_value:
+				company = frappe.get_cached_value(dimension, dimension_value, "company")
+				if company and company != self.company:
+					frappe.throw(
+						_("{0}: {1} does not belong to the Company: {2}").format(
+							dimension, frappe.bold(dimension_value), self.company
+						)
+					)
 
 	def validate_return_against_account(self):
 		if self.doctype in ["Sales Invoice", "Purchase Invoice"] and self.is_return and self.return_against:
@@ -1694,22 +1728,22 @@ class AccountsController(TransactionBase):
 				continue
 
 			ref_amt = flt(reference_details.get(item.get(item_ref_dn)), self.precision(based_on, item))
+			based_on_amt = flt(item.get(based_on))
 
 			if not ref_amt:
-				frappe.msgprint(
-					_("System will not check over billing since amount for Item {0} in {1} is zero").format(
-						item.item_code, ref_dt
-					),
-					title=_("Warning"),
-					indicator="orange",
-				)
+				if based_on_amt:  # Skip warning for free items
+					frappe.msgprint(
+						_(
+							"System will not check over billing since amount for Item {0} in {1} is zero"
+						).format(item.item_code, ref_dt),
+						title=_("Warning"),
+						indicator="orange",
+					)
 				continue
 
 			already_billed = self.get_billed_amount_for_item(item, item_ref_dn, based_on)
 
-			total_billed_amt = flt(
-				flt(already_billed) + flt(item.get(based_on)), self.precision(based_on, item)
-			)
+			total_billed_amt = flt(flt(already_billed) + based_on_amt, self.precision(based_on, item))
 
 			allowance, item_allowance, global_qty_allowance, global_amount_allowance = get_allowance_for(
 				item.item_code, item_allowance, global_qty_allowance, global_amount_allowance, "amount"

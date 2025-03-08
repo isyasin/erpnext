@@ -4235,6 +4235,7 @@ class TestSalesInvoice(FrappeTestCase):
 		si = create_sales_invoice(do_not_submit=True)
 
 		project = frappe.new_doc("Project")
+		project.company = "_Test Company"
 		project.project_name = "Test Total Billed Amount"
 		project.save()
 
@@ -4244,6 +4245,55 @@ class TestSalesInvoice(FrappeTestCase):
 
 		doc = frappe.get_doc("Project", project.name)
 		self.assertEqual(doc.total_billed_amount, si.grand_total)
+
+	def test_total_billed_amount_with_different_projects(self):
+		# This test case is for checking the scenario where project is set at document level and for **some** child items only, not all
+		from copy import copy
+
+		si = create_sales_invoice(do_not_submit=True)
+
+		project = frappe.new_doc("Project")
+		project.company = "_Test Company"
+		project.project_name = "Test Total Billed Amount"
+		project.save()
+
+		si.project = project.name
+		si.items.append(copy(si.items[0]))
+		si.items.append(copy(si.items[0]))
+		si.items[0].project = project.name
+		si.items[1].project = project.name
+		# Not setting project on last item
+		si.items[1].insert()
+		si.items[2].insert()
+		si.submit()
+
+		project.reload()
+		self.assertIsNone(si.items[2].project)
+		self.assertEqual(project.total_billed_amount, 300)
+
+	def test_pos_returns_with_party_account_currency(self):
+		from erpnext.accounts.doctype.sales_invoice.sales_invoice import make_sales_return
+
+		pos_profile = make_pos_profile()
+		pos_profile.payments = []
+		pos_profile.append("payments", {"default": 1, "mode_of_payment": "Cash"})
+		pos_profile.save()
+
+		pos = create_sales_invoice(
+			customer="_Test Customer USD",
+			currency="USD",
+			conversion_rate=86.595000000,
+			qty=2,
+			do_not_save=True,
+		)
+		pos.is_pos = 1
+		pos.pos_profile = pos_profile.name
+		pos.debit_to = "_Test Receivable USD - _TC"
+		pos.append("payments", {"mode_of_payment": "Cash", "account": "_Test Bank - _TC", "amount": 20.35})
+		pos.save().submit()
+
+		pos_return = make_sales_return(pos.name)
+		self.assertEqual(abs(pos_return.payments[0].amount), pos.payments[0].amount)
 
 
 def set_advance_flag(company, flag, default_account):

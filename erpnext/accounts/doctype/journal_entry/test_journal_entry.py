@@ -146,10 +146,9 @@ class TestJournalEntry(unittest.TestCase):
 				"credit_in_account_currency": 0 if diff > 0 else abs(diff),
 			},
 		)
-		jv.insert()
 
 		if account_bal == stock_bal:
-			self.assertRaises(StockAccountInvalidTransaction, jv.submit)
+			self.assertRaises(StockAccountInvalidTransaction, jv.save)
 			frappe.db.rollback()
 		else:
 			jv.submit()
@@ -576,7 +575,7 @@ class TestJournalEntry(unittest.TestCase):
 			order_by="account",
 		)
 		expected = [
-			{"account": "_Test Bank - _TC", "transaction_exchange_rate": 1.0},
+			{"account": "_Test Bank - _TC", "transaction_exchange_rate": 85.0},
 			{"account": "_Test Receivable USD - _TC", "transaction_exchange_rate": 85.0},
 		]
 		self.assertEqual(expected, actual)

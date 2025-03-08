@@ -1331,6 +1331,8 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				() => this.calculate_stock_uom_rate(doc, cdt, cdn),
 				() => this.apply_pricing_rule(item, true)
 			]);
+		} else {
+			this.conversion_factor(doc, cdt, cdn, true)
 		}
 	}
 
@@ -1658,7 +1660,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 				},
 				callback: function(r) {
 					if (!r.exc && r.message) {
-						me.remove_pricing_rule(r.message, removed_pricing_rule);
+						me.remove_pricing_rule(r.message, removed_pricing_rule, item.name);
 						me.calculate_taxes_and_totals();
 						if(me.frm.doc.apply_discount_on) me.frm.trigger("apply_discount_on");
 					}
@@ -1751,7 +1753,9 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 					"serial_no": d.serial_no,
 					"batch_no": d.batch_no,
 					"price_list_rate": d.price_list_rate,
-					"conversion_factor": d.conversion_factor || 1.0
+					"conversion_factor": d.conversion_factor || 1.0,
+					"discount_percentage" : d.discount_percentage,
+					"discount_amount" : d.discount_amount,
 				});
 
 				// if doctype is Quotation Item / Sales Order Iten then add Margin Type and rate in item_list
@@ -1853,7 +1857,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 
 		const exist_items = items.map(row => { return {item_code: row.item_code, pricing_rules: row.pricing_rules};});
 
-		args.free_item_data.forEach(pr_row => {
+		args.free_item_data.forEach(async pr_row => {
 			let row_to_modify = {};
 
 			// If there are no free items, or if the current free item doesn't exist in the table, add it
@@ -1871,6 +1875,14 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			for (let key in pr_row) {
 				row_to_modify[key] = pr_row[key];
 			}
+
+			if (this.frm.doc.hasOwnProperty("is_pos") && this.frm.doc.is_pos) {
+				let r = await frappe.db.get_value("POS Profile", this.frm.doc.pos_profile, "cost_center");
+				if (r.message.cost_center) {
+					row_to_modify["cost_center"] = r.message.cost_center;
+				}
+			}
+
 			this.frm.script_manager.copy_from_first_row("items", row_to_modify, ["expense_account", "income_account"]);
 		});
 
@@ -1935,7 +1947,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 		});
 	}
 
-	remove_pricing_rule(item, removed_pricing_rule) {
+	remove_pricing_rule(item, removed_pricing_rule, row_name) {
 		let me = this;
 		const fields = ["discount_percentage",
 			"discount_amount", "margin_rate_or_amount", "rate_with_margin"];
@@ -1973,6 +1985,13 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			});
 
 			me.trigger_price_list_rate();
+		}
+		else if(!item.is_free_item && row_name){
+			me.frm.doc.items.forEach(d => {
+				if (d.name != row_name) return;
+
+				Object.assign(d, item);
+			});
 		}
 	}
 
@@ -2358,29 +2377,39 @@ erpnext.TransactionController = class TransactionController extends erpnext.taxe
 			primary_action_label: __("Create")
 		});
 
-		this.frm.doc.items.forEach(item => {
-			if (this.has_inspection_required(item)) {
-				let dialog_items = dialog.fields_dict.items;
-				dialog_items.df.data.push({
-					"item_code": item.item_code,
-					"item_name": item.item_name,
-					"qty": item.qty,
-					"description": item.description,
-					"serial_no": item.serial_no,
-					"batch_no": item.batch_no,
-					"sample_size": item.sample_quantity,
-					"child_row_reference": item.name,
+		frappe.call({
+			method: "erpnext.controllers.stock_controller.check_item_quality_inspection",
+			args: {
+				doctype: this.frm.doc.doctype,
+				items: this.frm.doc.items
+			},
+			freeze: true,
+			callback: function (r) {
+				r.message.forEach(item => {
+					if (me.has_inspection_required(item)) {
+						let dialog_items = dialog.fields_dict.items;
+						dialog_items.df.data.push({
+							"item_code": item.item_code,
+							"item_name": item.item_name,
+							"qty": item.qty,
+							"description": item.description,
+							"serial_no": item.serial_no,
+							"batch_no": item.batch_no,
+							"sample_size": item.sample_quantity,
+							"child_row_reference": item.name,
+						});
+						dialog_items.grid.refresh();
+					}
 				});
-				dialog_items.grid.refresh();
+
+				data = dialog.fields_dict.items.df.data;
+				if (!data.length) {
+					frappe.msgprint(__("All items in this document already have a linked Quality Inspection."));
+				} else {
+					dialog.show();
+				}
 			}
 		});
-
-		data = dialog.fields_dict.items.df.data;
-		if (!data.length) {
-			frappe.msgprint(__("All items in this document already have a linked Quality Inspection."));
-		} else {
-			dialog.show();
-		}
 	}
 
 	has_inspection_required(item) {

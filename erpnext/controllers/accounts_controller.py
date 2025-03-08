@@ -8,7 +8,7 @@ from collections import defaultdict
 import frappe
 from frappe import _, bold, qb, throw
 from frappe.model.workflow import get_workflow_name, is_transition_condition_satisfied
-from frappe.query_builder import Criterion
+from frappe.query_builder import Criterion, DocType
 from frappe.query_builder.custom import ConstantColumn
 from frappe.query_builder.functions import Abs, Sum
 from frappe.utils import (
@@ -170,7 +170,7 @@ class AccountsController(TransactionBase):
 			self.validate_qty_is_not_zero()
 
 		if (
-			self.doctype in ["Sales Invoice", "Purchase Invoice"]
+			self.doctype in ["Sales Invoice", "Purchase Invoice", "POS Invoice"]
 			and self.get("is_return")
 			and self.get("update_stock")
 		):
@@ -194,6 +194,14 @@ class AccountsController(TransactionBase):
 		self.set_incoming_rate()
 		self.init_internal_values()
 
+		# Need to set taxes based on taxes_and_charges template
+		# before calculating taxes and totals
+		if self.meta.get_field("taxes_and_charges"):
+			self.validate_enabled_taxes_and_charges()
+			self.validate_tax_account_company()
+
+		self.set_taxes_and_charges()
+
 		if self.meta.get_field("currency"):
 			self.calculate_taxes_and_totals()
 
@@ -203,10 +211,6 @@ class AccountsController(TransactionBase):
 			validate_return(self)
 
 		self.validate_all_documents_schedule()
-
-		if self.meta.get_field("taxes_and_charges"):
-			self.validate_enabled_taxes_and_charges()
-			self.validate_tax_account_company()
 
 		self.validate_party()
 		self.validate_currency()
@@ -266,6 +270,7 @@ class AccountsController(TransactionBase):
 
 		self.set_total_in_words()
 		self.set_default_letter_head()
+		self.validate_company_in_accounting_dimension()
 
 	def set_default_letter_head(self):
 		if hasattr(self, "letter_head") and not self.letter_head:
@@ -402,6 +407,39 @@ class AccountsController(TransactionBase):
 		)
 		for row in batches:
 			frappe.delete_doc("Batch", row.name)
+
+	def validate_company_in_accounting_dimension(self):
+		doc_field = DocType("DocField")
+		accounting_dimension = DocType("Accounting Dimension")
+		dimension_list = (
+			frappe.qb.from_(accounting_dimension)
+			.select(accounting_dimension.document_type)
+			.join(doc_field)
+			.on(doc_field.parent == accounting_dimension.document_type)
+			.where(doc_field.fieldname == "company")
+		).run(as_list=True)
+
+		dimension_list = sum(dimension_list, ["Project"])
+		self.validate_company(dimension_list)
+
+		for child in self.get_all_children() or []:
+			self.validate_company(dimension_list, child)
+
+	def validate_company(self, dimension_list, child=None):
+		for dimension in dimension_list:
+			if not child:
+				dimension_value = self.get(frappe.scrub(dimension))
+			else:
+				dimension_value = child.get(frappe.scrub(dimension))
+
+			if dimension_value:
+				company = frappe.get_cached_value(dimension, dimension_value, "company")
+				if company and company != self.company:
+					frappe.throw(
+						_("{0}: {1} does not belong to the Company: {2}").format(
+							dimension, frappe.bold(dimension_value), self.company
+						)
+					)
 
 	def validate_return_against_account(self):
 		if self.doctype in ["Sales Invoice", "Purchase Invoice"] and self.is_return and self.return_against:
@@ -787,6 +825,13 @@ class AccountsController(TransactionBase):
 							):
 								item.set(fieldname, value)
 
+								if fieldname == "batch_no" and item.batch_no and not item.is_free_item:
+									if ret.get("rate"):
+										item.set("rate", ret.get("rate"))
+
+									if not item.get("price_list_rate") and ret.get("price_list_rate"):
+										item.set("price_list_rate", ret.get("price_list_rate"))
+
 							elif fieldname in ["cost_center", "conversion_factor"] and not item.get(
 								fieldname
 							):
@@ -935,6 +980,12 @@ class AccountsController(TransactionBase):
 		):
 			return True
 
+	def set_taxes_and_charges(self):
+		if frappe.db.get_single_value("Accounts Settings", "add_taxes_from_item_tax_template"):
+			if hasattr(self, "taxes_and_charges") and not self.get("taxes") and not self.get("is_pos"):
+				if tax_master_doctype := self.meta.get_field("taxes_and_charges").options:
+					self.append_taxes_from_master(tax_master_doctype)
+
 	def append_taxes_from_master(self, tax_master_doctype=None):
 		if self.get("taxes_and_charges"):
 			if not tax_master_doctype:
@@ -1068,20 +1119,19 @@ class AccountsController(TransactionBase):
 			)
 
 		# Update details in transaction currency
-		gl_dict.update(
-			{
-				"transaction_currency": self.get("currency") or self.company_currency,
-				"transaction_exchange_rate": item.get("exchange_rate", 1)
-				if self.doctype == "Journal Entry" and item
-				else self.get("conversion_rate", 1),
-				"debit_in_transaction_currency": self.get_value_in_transaction_currency(
-					account_currency, gl_dict, "debit"
-				),
-				"credit_in_transaction_currency": self.get_value_in_transaction_currency(
-					account_currency, gl_dict, "credit"
-				),
-			}
-		)
+		if self.doctype not in ["Purchase Invoice", "Sales Invoice", "Journal Entry", "Payment Entry"]:
+			gl_dict.update(
+				{
+					"transaction_currency": self.get("currency") or self.company_currency,
+					"transaction_exchange_rate": self.get("conversion_rate", 1),
+					"debit_in_transaction_currency": self.get_value_in_transaction_currency(
+						account_currency, gl_dict, "debit"
+					),
+					"credit_in_transaction_currency": self.get_value_in_transaction_currency(
+						account_currency, gl_dict, "credit"
+					),
+				}
+			)
 
 		if not args.get("against_voucher_type") and self.get("against_voucher_type"):
 			gl_dict.update({"against_voucher_type": self.get("against_voucher_type")})
@@ -1858,22 +1908,22 @@ class AccountsController(TransactionBase):
 				continue
 
 			ref_amt = flt(reference_details.get(item.get(item_ref_dn)), self.precision(based_on, item))
+			based_on_amt = flt(item.get(based_on))
 
 			if not ref_amt:
-				frappe.msgprint(
-					_("System will not check over billing since amount for Item {0} in {1} is zero").format(
-						item.item_code, ref_dt
-					),
-					title=_("Warning"),
-					indicator="orange",
-				)
+				if based_on_amt:  # Skip warning for free items
+					frappe.msgprint(
+						_(
+							"System will not check over billing since amount for Item {0} in {1} is zero"
+						).format(item.item_code, ref_dt),
+						title=_("Warning"),
+						indicator="orange",
+					)
 				continue
 
 			already_billed = self.get_billed_amount_for_item(item, item_ref_dn, based_on)
 
-			total_billed_amt = flt(
-				flt(already_billed) + flt(item.get(based_on)), self.precision(based_on, item)
-			)
+			total_billed_amt = flt(flt(already_billed) + based_on_amt, self.precision(based_on, item))
 
 			allowance, item_allowance, global_qty_allowance, global_amount_allowance = get_allowance_for(
 				item.item_code, item_allowance, global_qty_allowance, global_amount_allowance, "amount"
@@ -2413,10 +2463,15 @@ class AccountsController(TransactionBase):
 					)
 
 			if (
-				flt(total, self.precision("grand_total")) - flt(grand_total, self.precision("grand_total"))
+				abs(
+					flt(total, self.precision("grand_total"))
+					- flt(grand_total, self.precision("grand_total"))
+				)
 				> 0.1
-				or flt(base_total, self.precision("base_grand_total"))
-				- flt(base_grand_total, self.precision("base_grand_total"))
+				or abs(
+					flt(base_total, self.precision("base_grand_total"))
+					- flt(base_grand_total, self.precision("base_grand_total"))
+				)
 				> 0.1
 			):
 				frappe.throw(
@@ -2701,6 +2756,11 @@ class AccountsController(TransactionBase):
 				self.make_advance_payment_ledger_for_journal()
 			elif self.doctype == "Payment Entry":
 				self.make_advance_payment_ledger_for_payment()
+
+	def set_transaction_currency_and_rate_in_gl_map(self, gl_entries):
+		for x in gl_entries:
+			x["transaction_currency"] = self.currency
+			x["transaction_exchange_rate"] = self.get("conversion_rate") or 1
 
 
 @frappe.whitelist()
@@ -3686,6 +3746,7 @@ def update_child_qty_rate(parent_doctype, trans_items, parent_doctype_name, chil
 						).format(frappe.bold(parent.name))
 					)
 	else:  # Sales Order
+		parent.validate_for_duplicate_items()
 		parent.validate_warehouse()
 		parent.update_reserved_qty()
 		parent.update_project()

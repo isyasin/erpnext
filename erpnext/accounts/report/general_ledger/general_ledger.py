@@ -225,6 +225,9 @@ def get_conditions(filters):
 	if filters.get("voucher_no"):
 		conditions.append("voucher_no=%(voucher_no)s")
 
+	if filters.get("against_voucher_no"):
+		conditions.append("against_voucher=%(against_voucher_no)s")
+
 	if filters.get("ignore_err"):
 		err_journals = frappe.db.get_all(
 			"Journal Entry",

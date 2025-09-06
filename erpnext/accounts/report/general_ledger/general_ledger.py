@@ -205,7 +205,7 @@ def get_gl_entries(filters, accounting_dimensions):
 	)
 
 	if filters.get("presentation_currency"):
-		return convert_to_presentation_currency(gl_entries, currency_map)
+		return convert_to_presentation_currency(gl_entries, currency_map, filters)
 	else:
 		return gl_entries
 
@@ -579,6 +579,19 @@ def get_columns(filters):
 	else:
 		company = filters.get("company") or get_default_company()
 		filters["presentation_currency"] = currency = get_company_currency(company)
+
+	company_currency = get_company_currency(filters.get("company") or get_default_company())
+
+	if (
+		filters.get("show_amount_in_company_currency")
+		and filters["presentation_currency"] != company_currency
+	):
+		frappe.throw(
+			_("Presentation Currency cannot be {0} , When {1} is enabled.").format(
+				frappe.bold(filters["presentation_currency"]),
+				frappe.bold("Show Credit / Debit in Company Currency"),
+			)
+		)
 
 	columns = [
 		{

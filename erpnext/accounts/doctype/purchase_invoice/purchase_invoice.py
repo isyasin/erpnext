@@ -173,7 +173,12 @@ class PurchaseInvoice(BuyingController):
 			)
 		if not self.due_date:
 			self.due_date = get_due_date(
-				self.posting_date, "Supplier", self.supplier, self.company, self.bill_date
+				self.posting_date,
+				"Supplier",
+				self.supplier,
+				self.company,
+				self.bill_date,
+				template_name=self.payment_terms_template,
 			)
 
 		tds_category = frappe.db.get_value("Supplier", self.supplier, "tax_withholding_category")
@@ -781,7 +786,7 @@ class PurchaseInvoice(BuyingController):
 			self.get_provisional_accounts()
 
 		for item in self.get("items"):
-			if flt(item.base_net_amount):
+			if flt(item.base_net_amount) or (self.get("update_stock") and item.valuation_rate):
 				account_currency = get_account_currency(item.expense_account)
 				if item.item_code:
 					frappe.get_cached_value("Item", item.item_code, "asset_category")
@@ -1016,6 +1021,9 @@ class PurchaseInvoice(BuyingController):
 	def get_provisional_accounts(self):
 		self.provisional_accounts = frappe._dict()
 		linked_purchase_receipts = set([d.purchase_receipt for d in self.items if d.purchase_receipt])
+		if not linked_purchase_receipts:
+			return
+
 		pr_items = frappe.get_all(
 			"Purchase Receipt Item",
 			filters={"parent": ("in", linked_purchase_receipts)},

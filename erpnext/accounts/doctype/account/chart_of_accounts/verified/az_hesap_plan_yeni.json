@@ -109,13 +109,22 @@
                 "account_number": "22",
                 "is_group": 1,
                 "221 - Kassalar":{
-                    "account_number": "221","account_type":"Cash",
-                    "221-1 - Kassa":{"account_number": "221-1", "account_type":"Cash"}
+                    "account_number": "221","account_type":"Cash","is_group":1,
+                    "221.1 - Əsas Kassa":{"account_number": "221.1", "account_type":"Cash"}
                 },
                 "222 - Yolda olan pul köçürmələri": {"account_number": "222"},
-                "223 - Bank hesablaşma hesabları": {"account_number": "223", "account_type":"Bank"},
+                "223 - Bank hesablaşma hesabları": {
+                    "account_number": "223",
+                    "account_type":"Bank",
+                    "is_group":1,
+                    "223.1 - Əsas bank hesabı":{
+                        "account_number":"223.1",
+                        "account_type":"Bank"
+                    }
+                },
                 "224 - Digər tələbli bank hesabları": {"account_number": "224"},
-                "225 - Pul vəsaitlərinin ekvivalentləri": {"account_number": "225"}
+                "225 - Pul vəsaitlərinin ekvivalentləri": {"account_number": "225"},
+                "226 - ƏDV sub-uçot hesabı": {"account_number": "226", "account_type":"Bank"}
             },
             "23 - Sair qısamüddətli maliyyə aktivləri": {
                 "account_number": "23",
@@ -250,7 +259,11 @@
             "52 - Vergi və sair məcburi ödənişlər üzrə öhdəliklər": {
                 "account_number": "52",
                 "is_group": 1,
-                "521 - Vergi öhdəlikləri": {"account_number": "521"},
+                "521 - Vergi öhdəlikləri": {
+                    "account_number": "521",
+                    "is_group":1,
+                    "521.1 - Vergi öhdəlikləri-ƏDV": {"account_number":"521.1","account_type":"Tax"}
+                },
                 "522 - Sosial sığorta və təminat üzrə öhdəliklər": {"account_number": "522"},
                 "523 - Digər məcburi ödənişlər üzrə öhdəliklər": {"account_number": "523"}
             },
@@ -264,7 +277,13 @@
                     "531.1 - Malsatan və podratçılara qısamüddətli kreditor borcları (AZN)":{"account_number":"531.1"}
                 },
                 "532 - Törəmə(asılı) müəssisələrə qısamüddətli kreditor borcları": {"account_number": "532"},
-                "533 - İşçi heyətinə qısamüddətli kreditor borcları": {"account_number": "533"},
+                "533 - İşçi heyətinə qısamüddətli kreditor borcları": {
+                    "account_number": "533",
+                    "is_group":1,
+                    "533.1 - İşçi heyətinə qısamüddətli kreditor borcları":{
+                        "account_number":"533.1"
+                    }
+                },
                 "534 - Dividendlərin ödənilməsi üzrə təsisçilərə kreditor borcları": {"account_number": "534"},
                 "535 - İcarə üzrə qısamüddətli kreditor borcları": {"account_number": "535"},
                 "536 - Tikinti müqavilələri üzrə qısamüddətli kreditor borcları": {"account_number": "536"},
@@ -276,9 +295,16 @@
                 "is_group": 1,
                 "541 - Qısamüddətli pensiya öhdəlikləri": {"account_number": "541"},
                 "542 - Gələcək hesabat dövrünün gəlirləri": {"account_number": "542"},
-                "543 - Alınmış qısamüddətli avanslar": {"account_number": "543"},
+                "543 - Alınmış qısamüddətli avanslar": {"account_number": "543", "account_type":"Receivable"},
                 "544 - Qisamüddətli məqsədli maliyyələşmələr və daxilolmalar": {"account_number": "544"},
-                "545 - Digər qısamüddətli öhdəliklər": {"account_number": "545"}
+                "545 - Digər qısamüddətli öhdəliklər": {
+                    "account_number": "545",
+                    "is_group":1,
+                    "545.1 - Digər qısamüddətli öhdəliklər":{
+                        "account_number":"545.1",
+                        "account_type":"Stock Received But Not Billed"
+                    }
+                }
             }
         },
         "6 - GƏLİRLƏR": {

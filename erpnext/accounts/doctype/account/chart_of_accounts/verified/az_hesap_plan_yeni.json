@@ -274,7 +274,7 @@
                     "account_number": "531", 
                     "account_type":"Payable", 
                     "is_group":1,
-                    "531.1 - Malsatan və podratçılara qısamüddətli kreditor borcları (AZN)":{"account_number":"531.1"}
+                    "531.1 - Malsatan və podratçılara qısamüddətli kreditor borcları (AZN)":{"account_number":"531.1","account_type":"Payable"}
                 },
                 "532 - Törəmə(asılı) müəssisələrə qısamüddətli kreditor borcları": {"account_number": "532"},
                 "533 - İşçi heyətinə qısamüddətli kreditor borcları": {
@@ -361,7 +361,20 @@
             "73 - Sair əməliyyat xərcləri": {
                 "account_number": "73",
                 "is_group": 1,
-                "731 - Sair əməliyyat xərcləri": {"account_number": "731"}
+                "731 - Sair əməliyyat xərcləri": {
+                    "account_number": "731",
+                    "is_group":1,
+                    "731.1 Torpaq, tikili, avadanlıqların və digər uzunmüddətli aktivlərin xaricolması üzrə xərclər":{"account_number":"731.1"},
+                    "731.2 Yenidən qiymətləndirilmədən xərclər":{"account_number":"731.2"},
+                    "731.3 Qiymətdən düşmə üzrə xərclər":{"account_number":"731.3"},
+                    "731.4 Cərimələr və digər oxşar ödənişlər":{"account_number":"731.4"},
+                    "731.5 Keçmiş illər üzrə xərclər":{"account_number":"731.5"},
+                    "731.6 Şübhəli və ümidsiz borclar üzrə xərclər":{"account_number":"731.6"},
+                    "731.7 Aktivlərin dəyərinin azalması üzrə düzəlişlər":{"account_number":"731.7"},
+                    "731.8 Məzənnə xərcləri":{"account_number":"731.8"},
+                    "731.9 Əvəzsiz olaraq verilmiş aktivlər":{"account_number":"731.9"},
+                    "731.10 Digər əməliyyat xərcləri":{"account_number":"731.10","account_type":"Stock Adjustment"}
+                }
             },
             "74 - Fəaliyyətin dayandırılmasından zərərlər": {
                 "account_number": "74",

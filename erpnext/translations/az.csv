@@ -1197,7 +1197,8 @@
 "Invalid {0}","Etibarsız {0}"
 "Invalid {0} for Inter Company Transaction.","Şirkətlərarası Əməliyyat üçün etibarsız {0}."
 "Invalid {0}: {1}","Etibarsız {0}: {1}"
-"Inventory","İnventar"Investment Banking,İnvestisiya Bankçılığı
+"Inventory","İnventar"
+Investment Banking,İnvestisiya Bankçılığı
 Investments,İnvestisiyalar
 Invoice,Faktura
 Invoice Created,Faktura Yaradıldı
@@ -1881,7 +1882,7 @@ Please set 'Gain/Loss Account on Asset Disposal' in Company {0},Şirkət {0}-də
 Please set Account in Warehouse {0} or Default Inventory Account in Company {1},{0} Anbarında Hesab və ya {1} Şirkətində Əsas İnventar Hesabını təyin edin
 Please set B2C Limit in GST Settings.,Zəhmət olmasa GST Parametrlərində B2C Limitini təyin edin.
 Please set Company,Zəhmət olmasa Şirkət təyin edin
-Please set Company filter blank if Group By is 'Company',Qruplaşdırma 'Şirkət'dirsə, Şirkət filtrini boş qoyun
+Please set Company filter blank if Group By is 'Company',"Qruplaşdırma 'Şirkət'dirsə, Şirkət filtrini boş qoyun"
 Please set Default Payroll Payable Account in Company {0},{0} Şirkətində Əsas Əmək Haqqı Hesabını təyin edin
 Please set Depreciation related Accounts in Asset Category {0} or Company {1},{0} Aktiv Kateqoriyasında və ya {1} Şirkətində Amortizasiya ilə əlaqəli Hesabları təyin edin
 Please set GST Accounts in GST Settings,Zəhmət olmasa GST Parametrlərində GST Hesablarını təyin edin
@@ -2444,7 +2445,7 @@ Set as Completed,Tamamlanmış kimi təyin edin
 Set as Lost,İtirilmiş kimi təyin edin
 Set as Open,Açıq kimi təyin edin
 Set default inventory account for perpetual inventory,Daimi inventar üçün ilkin inventar hesabını təyin edin
-Set this if the customer is a Public Administration company.,Müştəri Dövlət İdarəçiliyi şirkətidirsə, bunu təyin edin.
+Set this if the customer is a Public Administration company.,"Müştəri Dövlət İdarəçiliyi şirkətidirsə, bunu təyin edin."
 Set {0} in asset category {1} or company {2},{1} aktiv kateqoriyasında və ya {2} şirkətində {0} təyin edin
 "Setting Events to {0}, since the Employee attached to the below Sales Persons does not have a User ID{1}","Hadisələr {0} təyin edilir, çünki aşağıdakı Satıcılara bağlı olan İşçinin İstifadəçi ID-si {1} yoxdur"
 Setting defaults,İlkin dəyərlərin təyini
@@ -2691,11 +2692,11 @@ Terms and Conditions,Qaydalar və Şərtlər
 Terms and Conditions Template,Qaydalar və Şərtlər Şablonu
 Territory,Ərazi
 Thank you for your business!,Bizimlə işlədiyiniz üçün təşəkkür edirik!
-The 'From Package No.' field must neither be empty nor it's value less than 1.,'Bağlama No-dan' sahəsi nə boş olmalı, nə də dəyəri 1-dən az olmalıdır.
+The 'From Package No.' field must neither be empty nor it's value less than 1.,"'Bağlama No-dan' sahəsi nə boş olmalı, nə də dəyəri 1-dən az olmalıdır."
 The Brand,Brend
 The Item {0} cannot have Batch,{0} Materialının partiyası ola bilməz
 The Loyalty Program isn't valid for the selected company,Sadiqlik Proqramı seçilmiş şirkət üçün etibarlı deyil
-The Payment Term at row {0} is possibly a duplicate.,{0} sətrindəki Ödəniş Şərti yəqin ki, təkrardır.
+The Payment Term at row {0} is possibly a duplicate.,"{0} sətrindəki Ödəniş Şərti yəqin ki, təkrardır."
 The Term End Date cannot be earlier than the Term Start Date. Please correct the dates and try again.,Müddətin Bitmə Tarixi Müddətin Başlama Tarixindən əvvəl ola bilməz. Zəhmət olmasa tarixləri düzəldin və yenidən cəhd edin.
 The Term End Date cannot be later than the Year End Date of the Academic Year to which the term is linked (Academic Year {}). Please correct the dates and try again.,"Müddətin Bitmə Tarixi, müddətin əlaqələndirildiyi Akademik İlin (Akademik İl {}) İl Sonu Tarixindən gec ola bilməz. Zəhmət olmasa tarixləri düzəldin və yenidən cəhd edin."
 The Term Start Date cannot be earlier than the Year Start Date of the Academic Year to which the term is linked (Academic Year {}). Please correct the dates and try again.,"Müddətin Başlama Tarixi, müddətin əlaqələndirildiyi Akademik İlin (Akademik İl {}) İl Başlama Tarixindən əvvəl ola bilməz. Zəhmət olmasa tarixləri düzəldin və yenidən cəhd edin."
@@ -2733,7 +2734,7 @@ This Item is a Variant of {0} (Template).,Bu Material {0} (Şablon) Variantıdı
 This Month's Summary,Bu Ayın Xülasəsi
 This Week's Summary,Bu Həftənin Xülasəsi
 This action will stop future billing. Are you sure you want to cancel this subscription?,Bu əməliyyat gələcək fakturalandırmanı dayandıracaq. Bu abunəliyi ləğv etmək istədiyinizə əminsiniz?
-This covers all scorecards tied to this Setup,Bu, bu Quraşdırmaya bağlı olan bütün qiymətləndirmə kartlarını əhatə edir
+This covers all scorecards tied to this Setup,"Bu, bu Quraşdırmaya bağlı olan bütün qiymətləndirmə kartlarını əhatə edir"
 This document is over limit by {0} {1} for item {4}. Are you making another {3} against the same {2}?,Bu sənəd {4} materialı üçün {0} {1} limitini aşır. Eyni {2} üçün başqa bir {3} edirsiniz?
 This is a root account and cannot be edited.,Bu kök hesabdır və redaktə edilə bilməz.
 This is a root customer group and cannot be edited.,Bu kök müştəri qrupudur və redaktə edilə bilməz.
@@ -2743,17 +2744,17 @@ This is a root item group and cannot be edited.,Bu kök material qrupudur və re
 This is a root sales person and cannot be edited.,Bu kök satıcıdır və redaktə edilə bilməz.
 This is a root supplier group and cannot be edited.,Bu kök təchizatçı qrupudur və redaktə edilə bilməz.
 This is a root territory and cannot be edited.,Bu kök ərazidir və redaktə edilə bilməz.
-This is an example website auto-generated from ERPNext,Bu, ERPNext-dən avtomatik yaradılmış nümunə vebsaytdır
-This is based on logs against this Vehicle. See timeline below for details,Bu, bu Nəqliyyat vasitəsinə qarşı olan jurnallara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın
+This is an example website auto-generated from ERPNext,"Bu, ERPNext-dən avtomatik yaradılmış nümunə vebsaytdır"
+This is based on logs against this Vehicle. See timeline below for details,"Bu, bu Nəqliyyat vasitəsinə qarşı olan jurnallara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın"
 This is based on stock movement. See {0} for details,Bu stok hərəkətinə əsaslanır. Təfərrüatlar üçün {0}-a baxın
-This is based on the Time Sheets created against this project,Bu, bu layihə üçün yaradılmış Vaxt Cədvəllərinə əsaslanır
-This is based on the attendance of this Student,Bu, bu Tələbənin davamiyyətinə əsaslanır
-This is based on transactions against this Customer. See timeline below for details,Bu, bu Müştəriyə qarşı olan əməliyyatlara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın
-This is based on transactions against this Healthcare Practitioner.,Bu, bu Tibb İşçisinə qarşı olan əməliyyatlara əsaslanır.
-This is based on transactions against this Patient. See timeline below for details,Bu, bu Pasiyentə qarşı olan əməliyyatlara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın
-This is based on transactions against this Sales Person. See timeline below for details,Bu, bu Satıcıya qarşı olan əməliyyatlara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın
-This is based on transactions against this Supplier. See timeline below for details,Bu, bu Təchizatçıya qarşı olan əməliyyatlara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın
-This {0} conflicts with {1} for {2} {3},Bu {0}, {2} {3} üçün {1} ilə ziddiyyət təşkil edir
+This is based on the Time Sheets created against this project,"Bu, bu layihə üçün yaradılmış Vaxt Cədvəllərinə əsaslanır"
+This is based on the attendance of this Student,"Bu, bu Tələbənin davamiyyətinə əsaslanır"
+This is based on transactions against this Customer. See timeline below for details,"Bu, bu Müştəriyə qarşı olan əməliyyatlara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın"
+This is based on transactions against this Healthcare Practitioner.,"Bu, bu Tibb İşçisinə qarşı olan əməliyyatlara əsaslanır."
+This is based on transactions against this Patient. See timeline below for details,"Bu, bu Pasiyentə qarşı olan əməliyyatlara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın"
+This is based on transactions against this Sales Person. See timeline below for details,"Bu, bu Satıcıya qarşı olan əməliyyatlara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın"
+This is based on transactions against this Supplier. See timeline below for details,"Bu, bu Təchizatçıya qarşı olan əməliyyatlara əsaslanır. Təfərrüatlar üçün aşağıdakı qrafikə baxın"
+This {0} conflicts with {1} for {2} {3},"Bu {0}, {2} {3} üçün {1} ilə ziddiyyət təşkil edir"
 Time Sheet for manufacturing.,İstehsal üçün Vaxt Cədvəli.
 Time Tracking,Vaxtın İzlənməsi
 "Time slot skiped, the slot {0} to {1} overlap exisiting slot {2} to {3}","Vaxt slotu atlandı, {0}-{1} slotu mövcud {2}-{3} slotu ilə üst-üstə düşür"
@@ -2766,7 +2767,7 @@ Timesheet for tasks.,Tapşırıqlar üçün Vaxt Cədvəli.
 Timesheet {0} is already completed or cancelled,Vaxt Cədvəli {0} artıq tamamlanıb və ya ləğv edilib
 Timesheets,Vaxt Cədvəlləri
 "Timesheets help keep track of time, cost and billing for activites done by your team","Vaxt Cədvəlləri komandanız tərəfindən yerinə yetirilən fəaliyyətlər üçün vaxtı, xərcləri və fakturaları izləməyə kömək edir"
-Titles for print templates e.g. Proforma Invoice.,Çap şablonları üçün başlıqlar, məsələn Proforma Faktura.
+Titles for print templates e.g. Proforma Invoice.,"Çap şablonları üçün başlıqlar, məsələn Proforma Faktura."
 To,Kimə
 To Address 1,Ünvan 1 (Kimə)
 To Address 2,Ünvan 2 (Kimə)
@@ -2838,7 +2839,7 @@ Total Variance,Ümumi Fərq
 Total Weightage of all Assessment Criteria must be 100%,Bütün Qiymətləndirmə Meyarlarının Ümumi Çəkisi 100% olmalıdır
 Total advance ({0}) against Order {1} cannot be greater than the Grand Total ({2}),{1} Sifarişi üzrə ümumi avans ({0}) Yekun Cəmdən ({2}) çox ola bilməz
 Total advance amount cannot be greater than total claimed amount,Ümumi avans məbləği ümumi tələb olunan məbləğdən çox ola bilməz
-Total allocated leaves are more days than maximum allocation of {0} leave type for employee {1} in the period,Ümumi təsis edilmiş məzuniyyətlər, {1} işçisi üçün dövr ərzində {0} məzuniyyət növünün maksimum təyinatından daha çox gündür
+Total allocated leaves are more days than maximum allocation of {0} leave type for employee {1} in the period,"Ümumi təsis edilmiş məzuniyyətlər, {1} işçisi üçün dövr ərzində {0} məzuniyyət növünün maksimum təyinatından daha çox gündür"
 Total allocated leaves are more than days in the period,Ümumi təsis edilmiş məzuniyyətlər dövr ərzindəki günlərdən daha çoxdur
 Total allocated percentage for sales team should be 100,Satış komandası üçün ümumi ayrılan faiz 100 olmalıdır
 Total cannot be zero,Cəm sıfır ola bilməz
@@ -2936,7 +2937,7 @@ Valid till date cannot be before transaction date,Etibarlılıq bitmə tarixi ə
 Validity,Etibarlılıq
 Validity period of this quotation has ended.,Bu təklifin etibarlılıq müddəti bitib.
 Valuation Rate,Maya Qiyməti
-Valuation Rate is mandatory if Opening Stock entered,Açılış Stoku daxil edilibsə, Maya Qiyməti məcburidir
+Valuation Rate is mandatory if Opening Stock entered,"Açılış Stoku daxil edilibsə, Maya Qiyməti məcburidir"
 Valuation type charges can not marked as Inclusive,Qiymətləndirmə tipli xərclər Daxildir kimi qeyd edilə bilməz
 Value Or Qty,Dəyər Və ya Miqdar
 Value Proposition,Dəyər Təklifi
@@ -4390,7 +4391,7 @@ For how much spent = 1 Loyalty Point,Nə qədər xərclənən = 1 Sadiqlik Xalı
 Mode of Payment Account,Ödəniş Üsulu Hesabı
 Default Account,Varsayılan Hesab
 Default account will be automatically updated in POS Invoice when this mode is selected.,Bu rejim seçildikdə varsayılan hesab POS Fakturasında avtomatik yenilənəcək.
-**Monthly Distribution** helps you distribute the Budget/Target across months if you have seasonality in your business.,**Aylıq Paylama** biznesinizdə mövsümilik varsa, Büdcəni/Hədəfi aylar üzrə paylamağa kömək edir.
+**Monthly Distribution** helps you distribute the Budget/Target across months if you have seasonality in your business.,"**Aylıq Paylama** biznesinizdə mövsümilik varsa, Büdcəni/Hədəfi aylar üzrə paylamağa kömək edir."
 Distribution Name,Paylama Adı
 Name of the Monthly Distribution,Aylıq Paylamanın Adı
 Monthly Distribution Percentages,Aylıq Paylama Faizləri
@@ -4441,7 +4442,7 @@ From Invoice Date,Faktura Tarixindən
 To Invoice Date,Faktura Tarixinə
 Minimum Invoice Amount,Minimum Faktura Məbləği
 Maximum Invoice Amount,Maksimum Faktura Məbləği
-System will fetch all the entries if limit value is zero.,Limit dəyəri sıfırdırsa, sistem bütün girişləri gətirəcək.
+System will fetch all the entries if limit value is zero.,"Limit dəyəri sıfırdırsa, sistem bütün girişləri gətirəcək."
 Get Unreconciled Entries,Uzlaşdırılmayan Qeydləri Al
 Unreconciled Payment Details,Üzləşdirilməmiş Ödəniş Detalları
 Invoice/Journal Entry Details,Faktura/Jurnal Girişi Detalları
@@ -4504,7 +4505,7 @@ Apply Rule On Item Code,Qaydanı bu Materiallara Tətbiq et
 Apply Rule On Item Group,Qaydanı Material Qrupuna Tətbiq et
 Apply Rule On Brand,Qaydanı Brendə Tətbiq et
 Mixed Conditions,Qarışıq şərtlər
-Conditions will be applied on all the selected items combined.,Şərt, bütün seçilmiş məhsulların cəminə tətbiq olunacaq.
+Conditions will be applied on all the selected items combined.,"Şərt, bütün seçilmiş məhsulların cəminə tətbiq olunacaq."
 Is Cumulative,Kumulyativdir
 Coupon Code Based,Kupon Kodu Əsaslıdır
 Discount on Other Item,Endirimi diğər MƏhsula tətbiq et
@@ -6286,12 +6287,12 @@ Check if material transfer entry is not required,Material transferi girişinin t
 Backflush Raw Materials From Work-in-Progress Warehouse,İşlənməkdə Olan Anbardan Xammalların Avtomatik Silinməsi
 Update Consumed Material Cost In Project,Layihədə İstifadə Olunan Material Dəyərini Yenilə
 Warehouses,Anbarlar
-This is a location where raw materials are available.,Bu, xammalın mövcud olduğu yerdir.
+This is a location where raw materials are available.,"Bu, xammalın mövcud olduğu yerdir."
 Work-in-Progress Warehouse,İşlənməkdə Olan Anbar
-This is a location where operations are executed.,Bu, əməliyyatların yerinə yetirildiyi yerdir.
-This is a location where final product stored.,Bu, son məhsulun saxlandığı yerdir.
+This is a location where operations are executed.,"Bu, əməliyyatların yerinə yetirildiyi yerdir."
+This is a location where final product stored.,"Bu, son məhsulun saxlandığı yerdir."
 Scrap Warehouse,Tullantı Anbarı
-This is a location where scraped materials are stored.,Bu, tullantı materiallarının saxlandığı yerdir.
+This is a location where scraped materials are stored.,"Bu, tullantı materiallarının saxlandığı yerdir."
 Required Items,Tələb Olunan Materiallar
 Actual Start Date,Faktiki Başlama Tarixi
 Planned End Date,Planlaşdırılmış Bitmə Tarixi
@@ -6640,7 +6641,7 @@ Collected Amount,Toplanan Məbləğ
 Expected Amount,Gözlənilən Məbləğ
 POS Closing Voucher Invoices,POS Bağlanış Qəbzi Fakturaları
 Quantity of Items,Məhsulların Sayı
-"Aggregate group of **Items** into another **Item**. This is useful if you are bundling a certain **Items** into a package and you maintain stock of the packed **Items** and not the aggregate **Item**. \n\nThe package **Item** will have ""Is Stock Item"" as ""No"" and ""Is Sales Item"" as ""Yes"".\n\nFor Example: If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.\n\nNote: BOM = Bill of Materials","**Məhsulları** başqa bir **Məhsul** halında qruplaşdırın. Bu, müəyyən **Məhsulları** paket halında birləşdirdiyiniz və paketlənmiş **Məhsulların** stokunu saxladığınız, lakin məcmu **Məhsulun** stokunu saxlamadığınız halda faydalıdır. \n\nPaket **Məhsulun** \"Stok Məhsuludur\" sahəsi \"Xeyr\" və \"Satış Məhsuludur\" sahəsi \"Bəli\" olacaq.\n\nMəsələn:Əgər siz Noutbukları və Sırt Çantalarını ayrı-ayrılıqda satırsınızsa və müştəri hər ikisini aldıqda xüsusi qiymət tətbiq edirsinizsə, o zaman Noutbuk + Sırt Çantası yeni Məhsul Paketi Materialı olacaq.\n\nQeyd: BOM = Materiallar Resepti"
+"Aggregate group of **Items** into another **Item**. This is useful if you are bundling a certain **Items** into a package and you maintain stock of the packed **Items** and not the aggregate **Item**. \n\nThe package **Item** will have ""Is Stock Item"" as ""No"" and ""Is Sales Item"" as ""Yes"".\n\nFor Example: If you are selling Laptops and Backpacks separately and have a special price if the customer buys both, then the Laptop + Backpack will be a new Product Bundle Item.\n\nNote: BOM = Bill of Materials","**Məhsulları** başqa bir **Məhsul** halında qruplaşdırın. Bu, müəyyən **Məhsulları** paket halında birləşdirdiyiniz və paketlənmiş **Məhsulların** stokunu saxladığınız, lakin məcmu **Məhsulun** stokunu saxlamadığınız halda faydalıdır. \n\nPaket **Məhsulun** ""Stok Məhsuludur"" sahəsi ""Xeyr"" və ""Satış Məhsuludur"" sahəsi ""Bəli"" olacaq.\n\nMəsələn:Əgər siz Noutbukları və Sırt Çantalarını ayrı-ayrılıqda satırsınızsa və müştəri hər ikisini aldıqda xüsusi qiymət tətbiq edirsinizsə, o zaman Noutbuk + Sırt Çantası yeni Məhsul Paketi Materialı olacaq.\n\nQeyd: BOM = Materiallar Resepti"
 Parent Item,Ana Material
 List items that form the package.,Paketi formalaşdıran materialları sadalayın.
 Quotation To,Təklif Növü
@@ -6887,7 +6888,7 @@ Show Contact Us Button,Bizimlə Əlaqə Düyməsini Göstər
 Show Stock Quantity,Stok Miqdarını Göstər
 Show Apply Coupon Code,Kupon Kodunu Tətbiq Et Göstər
 Allow items not in stock to be added to cart,Stokda olmayan məhsulların səbətə əlavə edilməsinə icazə ver
-Prices will not be shown if Price List is not set,Qiymət Cədvəli təyin edilməyibsə, qiymətlər göstərilməyəcək
+Prices will not be shown if Price List is not set,"Qiymət Cədvəli təyin edilməyibsə, qiymətlər göstərilməyəcək"
 Quotation Series,Təklif Qəbzi Seriyası
 Checkout Settings,Ödəniş Parametrləri
 Enable Checkout,Ödənişi Aktivləşdir
@@ -7046,7 +7047,7 @@ Website Item Groups,Veb sayt Məhsul Qrupları
 List this Item in multiple groups on the website.,Bu Məhsulu veb saytda birdən çox qrupda siyahılayın.
 Copy From Item Group,Məhsul Qrupundan Kopyala
 Website Content,Veb sayt Məzmunu
-You can use any valid Bootstrap 4 markup in this field. It will be shown on your Item Page.,Bu sahədə hər hansı etibarlı Bootstrap 4 işarələməsindən istifadə edə bilərsiniz. O, Məhsul Səhifənizdə göstəriləcək.
+You can use any valid Bootstrap 4 markup in this field. It will be shown on your Item Page.,"Bu sahədə hər hansı etibarlı Bootstrap 4 işarələməsindən istifadə edə bilərsiniz. O, Məhsul Səhifənizdə göstəriləcək."
 Total Projected Qty,Ümumi Proqnozlaşdırılan Miqdar
 Hub Publishing Details,Hub Nəşr Detalları
 Publish in Hub,Hub-da Dərc Et
@@ -7857,13 +7858,13 @@ No. of prints,Çap sayı
 Number of prints required for labelling the samples,Nümunələrin etiketlənməsi üçün tələb olunan çap sayı
 Payroll Cost Center,Ödəniş Vərəqi Xərc Mərkəzi
 Approvers,Təsdiq edənlər
-The first Approver in the list will be set as the default Approver.,Siyahıdakı ilk Təsdiq edən şəxs, standart Təsdiq edən kimi təyin ediləcək.
+The first Approver in the list will be set as the default Approver.,"Siyahıdakı ilk Təsdiq edən şəxs, standart Təsdiq edən kimi təyin ediləcək."
 Shift Request Approver,Növbə Tələbini Təsdiqləyən
 Provident Fund Account,Ehtiyat Fondu Hesabı
 MICR Code,MICR Kodu
 Repay unclaimed amount from salary,Tələb olunmayan məbləği maaşdan geri ödəmək
 Deduction from salary,Maaşdan tutulma
-If this is not checked the loan by default will be considered as a Demand Loan,Bu işarələnməsə, borc standart olaraq Tələbli Borc kimi qəbul ediləcək
+If this is not checked the loan by default will be considered as a Demand Loan,"Bu işarələnməsə, borc standart olaraq Tələbli Borc kimi qəbul ediləcək"
 This account is used for booking loan repayments from the borrower and also disbursing loans to the borrower,"Bu hesab borcalandan borc ödənişlərini qeyd etmək və həmçinin borcalana borc vermək üçün istifadə olunur"
 This account is capital account which is used to allocate capital for loan disbursal account,"Bu hesab, borc vermə hesabı üçün kapital ayırmaq üçün istifadə olunan kapital hesabıdır"
 This account will be used for booking loan interest accruals,Bu hesab borc faizi hesablamalarını qeyd etmək üçün istifadə olunacaq
@@ -7939,7 +7940,7 @@ Please Select a Supplier,Zəhmət olmasa bir Təchizatçı Seçin
 Add to Transit,Transite Əlavə et
 Set Basic Rate Manually,Əsas Qiyməti Əl ilə Təyin et
 "By default, the Item Name is set as per the Item Code entered. If you want Items to be named by a","Standart olaraq, Material Adı daxil edilmiş Material Koduna uyğun təyin edilir. Əgər Materialların başqa cür adlandırılmasını istəyirsinizsə"
-Set a Default Warehouse for Inventory Transactions. This will be fetched into the Default Warehouse in the Item master.,İnventar Əməliyyatları üçün Əsas Anbar təyin edin. Bu, Material kartındakı Əsas Anbar sahəsinə gətiriləcək.
+Set a Default Warehouse for Inventory Transactions. This will be fetched into the Default Warehouse in the Item master.,"İnventar Əməliyyatları üçün Əsas Anbar təyin edin. Bu, Material kartındakı Əsas Anbar sahəsinə gətiriləcək."
 "This will allow stock items to be displayed in negative values. Using this option depends on your use case. With this option unchecked, the system warns before obstructing a transaction that is causing negative stock.","Bu, stok materiallarının mənfi dəyərlərdə göstərilməsinə icazə verəcək. Bu seçimdən istifadə istifadə halınızdan asılıdır. Bu seçim işarələnmədikdə, sistem mənfi stoka səbəb olan əməliyyatı əngəlləməzdən əvvəl xəbərdarlıq edir."
 Choose between FIFO and Moving Average Valuation Methods. Click,FIFO və Hərəkətli Orta Qiymətləndirmə Metodları arasında seçim edin. Klikləyin
 to know more about them.,onlar haqqında daha çox öyrənmək üçün.
@@ -8088,7 +8089,7 @@ Please enter From Date and To Date to generate JSON,JSON yaratmaq üçün zəhm�
 Download DATEV File,DATEV Faylını Yüklə
 Numero has not set in the XML file,Numero XML faylında təyin edilməyib
 Inward Supplies(liable to reverse charge),Daxil olan Təchizatlar (əks yüklənməyə məruz qalır)
-This is based on the course schedules of this Instructor,Bu, bu Təlimatçının kurs cədvəllərinə əsaslanır
+This is based on the course schedules of this Instructor,"Bu, bu Təlimatçının kurs cədvəllərinə əsaslanır"
 Course and Assessment,Kurs və Qiymətləndirmə
 Course {0} has been added to all the selected programs successfully.,Kurs {0} bütün seçilmiş proqramlara uğurla əlavə edildi.
 Programs updated,Proqramlar yeniləndi
@@ -8151,7 +8152,7 @@ Please check your Plaid client ID and secret values,Zəhmət olmasa Plaid müşt
 Bank transaction creation error,Bank əməliyyatı yaratma xətası
 Unit of Measurement,Ölçü Vahidi
 Fiscal Year {0} Does Not Exist,Maliyyə İli {0} Mövcud Deyil
-Row # {0}: Returned Item {1} does not exist in {2} {3},Sətir # {0}: Qaytarılan Material {1}, {2} {3}-də mövcud deyil
+Row # {0}: Returned Item {1} does not exist in {2} {3},"Sətir # {0}: Qaytarılan Material {1}, {2} {3}-də mövcud deyil"
 Valuation type charges can not be marked as Inclusive,Qiymətləndirmə tipli xərclər Daxil olaraq işarələnə bilməz
 Insufficient Permissions,Qeyri-kafi İcazələr
 You are not allowed to update as per the conditions set in {} Workflow.,{} İş Axınında təyin olunan şərtlərə uyğun olaraq yeniləməyə icazəniz yoxdur.
@@ -8183,9 +8184,6 @@ Cost Center Already Allocated in a Distributed Cost Center cannot be converted t
 Trial Period Start date cannot be after Subscription Start Date,Sınaq Müddəti Başlanğıc tarixi Abunəlik Başlanğıc Tarixindən sonra ola bilməz
 Subscription End Date must be after {0} as per the subscription plan,Abunəlik Bitmə Tarixi abunə planına uyğun olaraq {0} tarixindən sonra olmalıdır
 Subscription End Date is mandatory to follow calendar months,Abunəlik Bitmə Tarixi təqvim aylarını izləmək üçün məcburidir
-Row #{}: POS Invoice {} is not against customer {},
-Row #{}: POS Invoice {} is not submitted yet,
-Row #{}: POS Invoice {} has been {},
 No Supplier found for Inter Company Transactions which represents company {0},{0} şirkətini təmsil edən Şirkətlərarası Əməliyyatlar üçün Təchizatçı tapılmadı
 No Customer found for Inter Company Transactions which represents company {0},{0} şirkətini təmsil edən Şirkətlərarası Əməliyyatlar üçün Müüştəri tapılmadı
 Invalid Period,Yanlış Dövr
@@ -8222,7 +8220,7 @@ All items have already been Invoiced/Returned,Bütün materiallar artıq Faktura
 All these items have already been Invoiced/Returned,Bütün bu materiallar artıq Fakturalanıb/Qaytarılıb
 Stock Reconciliations,Stok Üzləşdirmələri
 Merge not allowed,Birləşdirməyə icazə verilmir
-The following deleted attributes exist in Variants but not in the Template. You can either delete the Variants or keep the attribute(s) in template.,Aşağıdakı silinmiş atributlar Variantlarda mövcuddur, lakin Şablonda yoxdur. Siz Variantları silə və ya atribut(lar)ı şablonda saxlaya bilərsiniz.
+The following deleted attributes exist in Variants but not in the Template. You can either delete the Variants or keep the attribute(s) in template.,"Aşağıdakı silinmiş atributlar Variantlarda mövcuddur, lakin Şablonda yoxdur. Siz Variantları silə və ya atribut(lar)ı şablonda saxlaya bilərsiniz."
 Variant Items,Variant Materialları
 Variant Attribute Error,Variant Atribut Xətası
 The serial no {0} does not belong to item {1},{0} seriya nömrəsi {1} materialına aid deyil
@@ -8281,7 +8279,7 @@ Invalid Quantity,Yanlış Miqdar
 {0} with {1},{1} ilə {0}
 Appointment Confirmation Message Not Sent,Randevu Təsdiq Mesajı Göndərilmədi
 "SMS not sent, please check SMS Settings","SMS göndərilmədi, zəhmət olmasa SMS Parametrlərini yoxlayın"
-Healthcare Service Unit Type cannot have both {0} and {1},Səhiyyə Xidmət Vahidi Növündə həm {0}, həm də {1} ola bilməz
+Healthcare Service Unit Type cannot have both {0} and {1},"Səhiyyə Xidmət Vahidi Növündə həm {0}, həm də {1} ola bilməz"
 Healthcare Service Unit Type must allow atleast one among {0} and {1},Səhiyyə Xidmət Vahidi Növü {0} və {1} arasında ən azı birinə icazə verməlidir
 Set Response Time and Resolution Time for Priority {0} in row {1}.,{1}-ci sətirdə {0} Prioriteti üçün Cavab Vaxtı və Həll Vaxtını təyin edin.
 Response Time for {0} priority in row {1} can't be greater than Resolution Time.,{1}-ci sətirdə {0} prioriteti üçün Cavab Vaxtı Həll Vaxtından böyük ola bilməz.
@@ -8300,7 +8298,7 @@ Account {0} exists in parent company {1}.,{0} hesabı {1} ana şirkətində möv
 "To overrule this, enable '{0}' in company {1}","Bunu ləğv etmək üçün {1} şirkətində '{0}' seçimini aktivləşdirin"
 Invalid condition expression,Yanlış şərt ifadəsi
 Please Select a Company First,Zəhmət olmasa əvvəlcə Şirkət seçin
-Please Select Both Company and Party Type First,Zəhmət olmasa əvvəlcə həm Şirkət, həm də Tərəf Növünü seçin
+Please Select Both Company and Party Type First,"Zəhmət olmasa əvvəlcə həm Şirkət, həm də Tərəf Növünü seçin"
 Provide the invoice portion in percent,Faktura hissəsini faizlə daxil edin
 Give number of days according to prior selection,Əvvəlki seçimə uyğun günlərin sayını verin
 Email Details,E-poçt Detalları
@@ -8322,7 +8320,7 @@ Supplier Quotation Comparison,Təchizatçı Təklif Müqayisəsi
 Price per Unit (Stock UOM),Vahid Qiyməti (Stok Vahidi)
 Group by Supplier,Təchizatçıya görə qruplaşdır
 Group by Item,Materiala görə qruplaşdır
-Remember to set {field_label}. It is required by {regulation}.,{field_label} təyin etməyi unutmayın. Bu, {regulation} tərəfindən tələb olunur.
+Remember to set {field_label}. It is required by {regulation}.,"{field_label} təyin etməyi unutmayın. Bu, {regulation} tərəfindən tələb olunur."
 Enrollment Date cannot be before the Start Date of the Academic Year {0},Qeydiyyat Tarixi {0} Tədris İlinin Başlama Tarixindən əvvəl ola bilməz
 Enrollment Date cannot be after the End Date of the Academic Term {0},Qeydiyyat Tarixi {0} Akademik Dövrün Bitmə Tarixindən sonra ola bilməz
 Enrollment Date cannot be before the Start Date of the Academic Term {0},Qeydiyyat Tarixi {0} Akademik Dövrün Başlama Tarixindən əvvəl ola bilməz
@@ -8335,7 +8333,7 @@ Regards,Hörmətlə
 Please click on the following button to set your new password,Yeni şifrənizi təyin etmək üçün aşağıdakı düyməni klikləyin
 Update Password,Şifrəni Yenilə
 Row #{}: Selling rate for item {} is lower than its {}. Selling {} should be atleast {},Sətir #{}: {} materialının satış qiyməti onun {}-dən aşağıdır. Satış {} ən azı {} olmalıdır
-You can alternatively disable selling price validation in {} to bypass this validations.,Alternativ olaraq, bu yoxlamadan yan keçmək üçün {}-də satış qiyməti yoxlamasını deaktiv edə bilərsiniz.
+You can alternatively disable selling price validation in {} to bypass this validations.,"Alternativ olaraq, bu yoxlamadan yan keçmək üçün {}-də satış qiyməti yoxlamasını deaktiv edə bilərsiniz."
 Invalid Selling Price,Yanlış Satış Qiyməti
 Address needs to be linked to a Company. Please add a row for Company in the Links table.,Ünvan bir Şirkətlə əlaqələndirilməlidir. Zəhmət olmasa Əlaqələr cədvəlində Şirkət üçün bir sətir əlavə edin.
 Company Not Linked,Şirkət Əlaqələndirilməyib
@@ -8344,7 +8342,7 @@ Completed Qty cannot be greater than 'Qty to Manufacture',Tamamlanmış Miqdar '
 "Row {0}: For Supplier {1}, Email Address is Required to send an email","Sətir {0}: Təchizatçı {1} üçün e-poçt göndərmək üçün E-poçt Ünvanı Tələb Olunur"
 "If enabled, the system will post accounting entries for inventory automatically","Aktiv edilərsə, sistem inventar üçün mühasibat qeydlərini avtomatik yerləşdirəcək"
 Accounts Frozen Till Date,Hesablar Bu Tarixə Qədər Dondurulub
-Accounting entries are frozen up to this date. Nobody can create or modify entries except users with the role specified below,Mühasibat qeydləri bu tarixə qədər dondurulub. Aşağıda göstərilən rola malik istifadəçilər istisna olmaqla, heç kim qeydlər yarada və ya dəyişdirə bilməz
+Accounting entries are frozen up to this date. Nobody can create or modify entries except users with the role specified below,"Mühasibat qeydləri bu tarixə qədər dondurulub. Aşağıda göstərilən rola malik istifadəçilər istisna olmaqla, heç kim qeydlər yarada və ya dəyişdirə bilməz"
 Role Allowed to Set Frozen Accounts and Edit Frozen Entries,Dondurulmuş Hesabları Təyin Etməyə və Dondurulmuş Qeydləri Redaktə Etməyə İcazə Verilən Rol
 Address used to determine Tax Category in transactions,Əməliyyatlarda Vergi Kateqoriyasını müəyyən etmək üçün istifadə olunan ünvan
 "The percentage you are allowed to bill more against the amount ordered. For example, if the order value is $100 for an item and tolerance is set as 10%, then you are allowed to bill up to $110","Sifariş olunan məbləğdən artıq faktura təqdim etməyə icazə verilən faiz. Məsələn, bir material üçün sifariş dəyəri 100 dollardırsa və tolerantlıq 10% olaraq təyin edilibsə, o zaman 110 dollara qədər faktura təqdim etməyə icazə verilir"
@@ -8421,7 +8419,7 @@ Validate Selling Price for Item Against Purchase Rate or Valuation Rate,Material
 Hide Customer's Tax ID from Sales Transactions,Satış Əməliyyatlarında Müştərinin VÖEN-ni Gizlət
 "The percentage you are allowed to receive or deliver more against the quantity ordered. For example, if you have ordered 100 units, and your Allowance is 10%, then you are allowed to receive 110 units.","Sifariş olunan miqdardan artıq almaq və ya çatdırmaq üçün icazə verilən faiz. Məsələn, 100 vahid sifariş etmisinizsə və İcazə həddi 10%-dirsə, o zaman 110 vahid almağa icazə verilir."
 Action If Quality Inspection Is Not Submitted,Keyfiyyət Yoxlaması Təqdim Edilmədikdə Tədbir
-Auto Insert Price List Rate If Missing,Əgər Yoxdursa, Qiymət Cədvəli Qiymətini Avtomatik Daxil Et
+Auto Insert Price List Rate If Missing,"Əgər Yoxdursa, Qiymət Cədvəli Qiymətini Avtomatik Daxil Et"
 Automatically Set Serial Nos Based on FIFO,Seriya Nömrələrini FIFO Əsasında Avtomatik Təyin Et
 Set Qty in Transactions Based on Serial No Input,Əməliyyatlarda Miqdarı Seriya Nömrəsi Girişinə Əsasən Təyin Et
 Raise Material Request When Stock Reaches Re-order Level,Stok Yenidən Sifariş Səviyyəsinə Çatdıqda Material Tələb Qəbzi Yarat
@@ -8467,7 +8465,7 @@ You had {} errors while creating opening invoices. Check {} for more details,Aç
 Error Occured,Xəta Baş Verdi
 Opening Invoice Creation In Progress,Açılış Fakturasının Yaradılması Davam Edir
 Creating {} out of {} {},{} / {} {} yaradılır
-(Serial No: {0}) cannot be consumed as it's reserverd to fullfill Sales Order {1}.,(Seriya Nömrəsi: {0}) istehlak edilə bilməz, çünki {1} Satış Sifarişini yerinə yetirmək üçün rezerv edilib.
+(Serial No: {0}) cannot be consumed as it's reserverd to fullfill Sales Order {1}.,"(Seriya Nömrəsi: {0}) istehlak edilə bilməz, çünki {1} Satış Sifarişini yerinə yetirmək üçün rezerv edilib."
 Item {0} {1},{0} {1} Materialı
 Last Stock Transaction for item {0} under warehouse {1} was on {2}.,{1} anbarında {0} materialı üçün son stok əməliyyatı {2} tarixində olub.
 Stock Transactions for Item {0} under warehouse {1} cannot be posted before this time.,{1} anbarında {0} Materialı üçün Stok Əməliyyatları bu vaxtdan əvvəl göndərilə bilməz.
@@ -8541,7 +8539,7 @@ Batch {0} already selected.,Partiya {0} artıq seçilib.
 Please select a warehouse to get available quantities,Mövcud miqdarları əldə etmək üçün zəhmət olmasa anbar seçin
 "For transfer from source, selected quantity cannot be greater than available quantity","Mənbədən köçürmə üçün seçilmiş miqdar mövcud miqdardan çox ola bilməz"
 Cannot find Item with this Barcode,Bu Barkodlu Material tapılmadı
-{0} is mandatory. Maybe Currency Exchange record is not created for {1} to {2},{0} məcburidir. Ola bilsin ki, {1}-dən {2}-ə Valyuta Mübadiləsi qeydi yaradılmayıb
+{0} is mandatory. Maybe Currency Exchange record is not created for {1} to {2},"{0} məcburidir. Ola bilsin ki, {1}-dən {2}-ə Valyuta Mübadiləsi qeydi yaradılmayıb"
 {} has submitted assets linked to it. You need to cancel the assets to create purchase return.,{}-ə bağlı təsdiqlənmiş aktivlər var. Satınalma qaytarılması yaratmaq üçün aktivləri ləğv etməlisiniz.
 Cannot cancel this document as it is linked with submitted asset {0}. Please cancel it to continue.,Təsdiqlənmiş aktiv {0} ilə əlaqəli olduğu üçün bu sənədi ləğv etmək olmur. Davam etmək üçün lütfən onu ləğv edin.
 Row #{}: Serial No. {} has already been transacted into another POS Invoice. Please select valid serial no.,Sətir #{}: Seriya Nömrəsi {} artıq başqa bir POS Fakturasında əməliyyat olunub. Zəhmət olmasa düzgün seriya nömrəsi seçin.
@@ -8554,11 +8552,11 @@ Please ensure {} account is a Balance Sheet account. You can change the parent a
 Please ensure {} account is a Payable account. Change the account type to Payable or select a different account.,Zəhmət olmasa {} hesabının Kreditor hesabı olduğundan əmin olun. Hesab növünü Kreditor olaraq dəyişdirin və ya başqa hesab seçin.
 Row {}: Expense Head changed to {},Sətir {}: Xərc Hesabı {} olaraq dəyişdirildi
 because account {} is not linked to warehouse {},çünki {} hesabı {} anbarına bağlı deyil
-or it is not the default inventory account,və ya o, standart inventar hesabı deyil
+or it is not the default inventory account,"və ya o, standart inventar hesabı deyil"
 Expense Head Changed,Xərc Hesabı Dəyişdirildi
 because expense is booked against this account in Purchase Receipt {},çünki xərc Satınalma Qaiməsi {}-də bu hesaba qarşı qeydə alınıb
 as no Purchase Receipt is created against Item {}.,çünki {} Materialına qarşı heç bir Satınalma Qaiməsi yaradılmayıb.
-This is done to handle accounting for cases when Purchase Receipt is created after Purchase Invoice,Bu, Satınalma Fakturasından sonra Satınalma Qaiməsi yaradıldığı hallarda mühasibat uçotunu idarə etmək üçün edilir
+This is done to handle accounting for cases when Purchase Receipt is created after Purchase Invoice,"Bu, Satınalma Fakturasından sonra Satınalma Qaiməsi yaradıldığı hallarda mühasibat uçotunu idarə etmək üçün edilir"
 Purchase Order Required for item {},{} materialı üçün Satınalma Sifarişi Tələb Olunur
 To submit the invoice without purchase order please set {},Fakturanı satınalma sifarişi olmadan təsdiqləmək üçün zəhmət olmasa təyin edin:
 as {} in {},{} olaraq {}-də
@@ -8575,7 +8573,7 @@ Please ensure {} account is a Balance Sheet account.,Zəhmət olmasa {} hesabın
 You can change the parent account to a Balance Sheet account or select a different account.,Ana hesabı Balans Hesabatı hesabına dəyişə və ya başqa hesab seçə bilərsiniz.
 Please ensure {} account is a Receivable account.,Zəhmət olmasa {} hesabının Debitor hesabı olduğundan əmin olun.
 Change the account type to Receivable or select a different account.,Hesab növünü Debitor olaraq dəyişdirin və ya başqa hesab seçin.
-{} can't be cancelled since the Loyalty Points earned has been redeemed. First cancel the {} No {},{} ləğv edilə bilməz, çünki qazanılmış Sadiqlik Xalları istifadə edilib. Əvvəlcə {} Nömrə {}-ni ləğv edin
+{} can't be cancelled since the Loyalty Points earned has been redeemed. First cancel the {} No {},"{} ləğv edilə bilməz, çünki qazanılmış Sadiqlik Xalları istifadə edilib. Əvvəlcə {} Nömrə {}-ni ləğv edin"
 already exists,artıq mövcuddur
 POS Closing Entry {} against {} between selected period,Seçilmiş dövr arasında {} qarşı POS Bağlanış Girişi {}
 POS Invoice is {},POS Fakturası {}-dir

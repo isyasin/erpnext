@@ -297,6 +297,7 @@ frappe.ui.form.on("BOM", {
 						bom_no: frm.doc.name,
 						item: item,
 						qty: data.qty || 0.0,
+						company: frm.doc.company,
 						project: frm.doc.project,
 						variant_items: variant_items,
 						use_multi_level_bom: frm.doc?.track_semi_finished_goods ? 0 : use_multi_level_bom,
@@ -637,11 +638,18 @@ erpnext.bom.BomController = class BomController extends erpnext.TransactionContr
 	}
 
 	buying_price_list(doc) {
-		this.apply_price_list();
+		if (doc.rm_cost_as_per !== "Price List" && doc.buying_price_list) {
+			this.frm.set_value("buying_price_list", "");
+			return;
+		}
+
+		if (doc.buying_price_list) {
+			this.apply_price_list();
+		}
 	}
 
 	plc_conversion_rate(doc) {
-		if (!this.in_apply_price_list) {
+		if (!this.in_apply_price_list && doc.rm_cost_as_per === "Price List") {
 			this.apply_price_list(null, true);
 		}
 	}

@@ -587,7 +587,7 @@ class WorkOrder(Document):
 		if self.docstatus == 0:
 			status = "Draft"
 		elif self.docstatus == 1:
-			if status != "Stopped":
+			if status not in ["Closed", "Stopped"]:
 				status = "Not Started"
 				if flt(self.material_transferred_for_manufacturing) > 0:
 					status = "In Process"
@@ -713,19 +713,25 @@ class WorkOrder(Document):
 		self.db_set("disassembled_qty", self.disassembled_qty)
 
 	def get_transferred_or_manufactured_qty(self, purpose, fieldname):
-		table = frappe.qb.DocType("Stock Entry")
-		query = frappe.qb.from_(table).where(
-			(table.work_order == self.name) & (table.docstatus == 1) & (table.purpose == purpose)
+		parent = frappe.qb.DocType("Stock Entry")
+
+		query = frappe.qb.from_(parent).where(
+			(parent.work_order == self.name)
+			& (parent.docstatus == 1)
+			& (parent.purpose == purpose)
+			& (parent.is_additional_transfer_entry == cint(fieldname == "additional_transferred_qty"))
 		)
 
 		if purpose == "Manufacture":
-			query = query.select(Sum(table.fg_completed_qty) - Sum(table.process_loss_qty))
+			child = frappe.qb.DocType("Stock Entry Detail")
+			query = (
+				query.join(child)
+				.on(parent.name == child.parent)
+				.select(Sum(child.transfer_qty))
+				.where(child.is_finished_item == 1)
+			)
 		else:
-			query = query.select(Sum(table.fg_completed_qty))
-
-		query = query.where(
-			table.is_additional_transfer_entry == cint(fieldname == "additional_transferred_qty")
-		)
+			query = query.select(Sum(parent.fg_completed_qty))
 
 		return flt(query.run()[0][0])
 
@@ -2255,7 +2261,11 @@ def get_item_details(item, project=None, skip_bom_info=False, throw=True):
 
 
 @frappe.whitelist()
-def make_work_order(bom_no, item, qty=0, project=None, variant_items=None, use_multi_level_bom=None):
+def make_work_order(
+	bom_no, item, qty=0, company=None, project=None, variant_items=None, use_multi_level_bom=None
+):
+	from erpnext import get_default_company
+
 	if not frappe.has_permission("Work Order", "write"):
 		frappe.throw(_("Not permitted"), frappe.PermissionError)
 
@@ -2271,6 +2281,7 @@ def make_work_order(bom_no, item, qty=0, project=None, variant_items=None, use_m
 	wo_doc = frappe.new_doc("Work Order")
 	wo_doc.track_semi_finished_goods = frappe.db.get_value("BOM", bom_no, "track_semi_finished_goods")
 	wo_doc.production_item = item
+	wo_doc.company = company or get_default_company()
 	wo_doc.update(item_details)
 	wo_doc.bom_no = bom_no
 	wo_doc.use_multi_level_bom = cint(use_multi_level_bom)

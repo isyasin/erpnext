@@ -8,9 +8,8 @@ import frappe
 import frappe.permissions
 from frappe.core.doctype.user_permission.test_user_permission import create_user
 from frappe.tests import change_settings
-from frappe.utils import add_days, flt, nowdate, today
+from frappe.utils import add_days, flt, getdate, nowdate, today
 
-from erpnext.accounts.test.accounts_mixin import AccountsTestMixin
 from erpnext.controllers.accounts_controller import InvalidQtyError, get_due_date, update_child_qty_rate
 from erpnext.maintenance.doctype.maintenance_schedule.test_maintenance_schedule import (
 	make_maintenance_schedule,
@@ -25,6 +24,7 @@ from erpnext.selling.doctype.sales_order.sales_order import (
 	create_pick_list,
 	make_delivery_note,
 	make_material_request,
+	make_production_plan,
 	make_raw_material_request,
 	make_sales_invoice,
 	make_work_orders,
@@ -35,10 +35,7 @@ from erpnext.stock.get_item_details import get_bin_details
 from erpnext.tests.utils import ERPNextTestSuite
 
 
-class TestSalesOrder(AccountsTestMixin, ERPNextTestSuite):
-	def setUp(self):
-		self.create_customer("_Test Customer Credit")
-
+class TestSalesOrder(ERPNextTestSuite):
 	@ERPNextTestSuite.change_settings(
 		"Stock Settings",
 		{
@@ -216,6 +213,26 @@ class TestSalesOrder(AccountsTestMixin, ERPNextTestSuite):
 
 		self.assertEqual(dn.doctype, "Delivery Note")
 		self.assertEqual(len(dn.get("items")), len(so.get("items")))
+
+	def test_make_production_plan(self):
+		from erpnext.manufacturing.doctype.production_plan.test_production_plan import make_bom
+
+		fg_item = make_item("Test PP FG Item", {"is_stock_item": 1}).name
+		make_bom(item=fg_item, rate=100, raw_materials=["_Test Item"])
+
+		so = make_sales_order(item_code=fg_item, do_not_submit=True)
+		self.assertRaises(frappe.ValidationError, make_production_plan, so.name)
+
+		so.submit()
+		pp = make_production_plan(so.name)
+
+		self.assertEqual(pp.doctype, "Production Plan")
+		self.assertGreater(len(pp.get("po_items")), 0)
+		self.assertEqual(pp.get("po_items")[0].sales_order, so.name)
+		self.assertEqual(pp.get("sales_orders")[0].sales_order, so.name)
+		self.assertEqual(getdate(pp.get("sales_orders")[0].sales_order_date), getdate(so.transaction_date))
+		self.assertEqual(pp.get("sales_orders")[0].customer, so.customer)
+		self.assertEqual(pp.get("sales_orders")[0].grand_total, so.base_grand_total)
 
 	def test_make_sales_invoice(self):
 		so = make_sales_order(do_not_submit=True)
@@ -2439,7 +2456,7 @@ class TestSalesOrder(AccountsTestMixin, ERPNextTestSuite):
 	def test_credit_limit_on_so_reopning(self):
 		# set credit limit
 		company = "_Test Company"
-		customer = frappe.get_doc("Customer", self.customer)
+		customer = frappe.get_doc("Customer", "_Test Customer")
 		customer.credit_limits = []
 		customer.append(
 			"credit_limits", {"company": company, "credit_limit": 1000, "bypass_credit_limit_check": False}
@@ -2447,35 +2464,33 @@ class TestSalesOrder(AccountsTestMixin, ERPNextTestSuite):
 		customer.save()
 
 		so1 = make_sales_order(qty=9, rate=100, do_not_submit=True)
-		so1.customer = self.customer
+		so1.customer = customer.name
 		so1.save().submit()
 
 		so1.update_status("Closed")
 
 		so2 = make_sales_order(qty=9, rate=100, do_not_submit=True)
-		so2.customer = self.customer
+		so2.customer = customer.name
 		so2.save().submit()
 
 		self.assertRaises(frappe.ValidationError, so1.update_status, "Draft")
 
 	@ERPNextTestSuite.change_settings("Stock Settings", {"enable_stock_reservation": True})
 	def test_warehouse_mapping_based_on_stock_reservation(self):
-		self.create_company(company_name="Glass Ceiling", abbr="GC")
-		self.create_item("Lamy Safari 2", True, self.warehouse_stores, self.company, 2000)
-		self.create_customer()
-		self.clear_old_entries()
+		warehouse = "Stores - _TC"
+		warehouse_finished = "Finished Goods - _TC"
 
 		so = frappe.new_doc("Sales Order")
-		so.company = self.company
-		so.customer = self.customer
+		so.company = "_Test Company"
+		so.customer = "_Test Customer"
 		so.transaction_date = today()
 		so.append(
 			"items",
 			{
-				"item_code": self.item,
+				"item_code": "_Test Item",
 				"qty": 10,
 				"rate": 2000,
-				"warehouse": self.warehouse_stores,
+				"warehouse": "Stores - _TC",
 				"delivery_date": today(),
 			},
 		)
@@ -2485,12 +2500,12 @@ class TestSalesOrder(AccountsTestMixin, ERPNextTestSuite):
 		se = frappe.get_doc(
 			{
 				"doctype": "Stock Entry",
-				"company": self.company,
+				"company": "_Test Company",
 				"stock_entry_type": "Material Receipt",
 				"posting_date": today(),
 				"items": [
-					{"item_code": self.item, "t_warehouse": self.warehouse_stores, "qty": 5},
-					{"item_code": self.item, "t_warehouse": self.warehouse_finished_goods, "qty": 5},
+					{"item_code": "_Test Item", "t_warehouse": warehouse, "qty": 5},
+					{"item_code": "_Test Item", "t_warehouse": warehouse_finished, "qty": 5},
 				],
 			}
 		)
@@ -2503,7 +2518,7 @@ class TestSalesOrder(AccountsTestMixin, ERPNextTestSuite):
 				{
 					"sales_order_item": itm.name,
 					"item_code": itm.item_code,
-					"warehouse": self.warehouse_stores,
+					"warehouse": warehouse,
 					"qty_to_reserve": 2,
 				}
 			]
@@ -2513,7 +2528,7 @@ class TestSalesOrder(AccountsTestMixin, ERPNextTestSuite):
 				{
 					"sales_order_item": itm.name,
 					"item_code": itm.item_code,
-					"warehouse": self.warehouse_finished_goods,
+					"warehouse": warehouse_finished,
 					"qty_to_reserve": 3,
 				}
 			]
@@ -2523,31 +2538,31 @@ class TestSalesOrder(AccountsTestMixin, ERPNextTestSuite):
 		dn = make_delivery_note(so.name, kwargs={"for_reserved_stock": True})
 		self.assertEqual(2, len(dn.items))
 		self.assertEqual(dn.items[0].qty, 2)
-		self.assertEqual(dn.items[0].warehouse, self.warehouse_stores)
+		self.assertEqual(dn.items[0].warehouse, warehouse)
 		self.assertEqual(dn.items[1].qty, 3)
-		self.assertEqual(dn.items[1].warehouse, self.warehouse_finished_goods)
+		self.assertEqual(dn.items[1].warehouse, warehouse_finished)
 
 		from erpnext.stock.doctype.warehouse.test_warehouse import create_warehouse
 
-		warehouse = create_warehouse("Test Warehouse 1", company=self.company)
+		warehouse = create_warehouse("Test Warehouse 1", company="_Test Company")
 
 		make_stock_entry(
-			item_code=self.item,
+			item_code="_Test Item",
 			target=warehouse,
 			qty=5,
-			company=self.company,
+			company="_Test Company",
 		)
 
 		so = frappe.new_doc("Sales Order")
 		so.reserve_stock = 1
-		so.company = self.company
-		so.customer = self.customer
+		so.company = "_Test Company"
+		so.customer = "_Test Customer"
 		so.transaction_date = today()
 		so.currency = "INR"
 		so.append(
 			"items",
 			{
-				"item_code": self.item,
+				"item_code": "_Test Item",
 				"qty": 5,
 				"rate": 2000,
 				"warehouse": warehouse,
@@ -2793,7 +2808,6 @@ def make_sales_order(**args):
 		)
 
 	so.delivery_date = add_days(so.transaction_date, 10)
-
 	if not args.do_not_save:
 		so.insert()
 		if not args.do_not_submit:

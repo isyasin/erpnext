@@ -684,21 +684,6 @@ class Company(NestedSet):
 
 			self.db_set("disposal_account", disposal_acct)
 
-		if not self.service_expense_account:
-			service_expense_acct = frappe.db.get_value(
-				"Account",
-				{
-					"account_name": _("Marketing Expenses"),
-					"company": self.name,
-					"is_group": 0,
-					"root_type": "Expense",
-				},
-				"name",
-			)
-
-			if service_expense_acct:
-				self.db_set("service_expense_account", service_expense_acct)
-
 	def _set_default_account(self, fieldname, account_type):
 		if self.get(fieldname):
 			return
@@ -820,7 +805,7 @@ class Company(NestedSet):
 		boms = frappe.db.sql_list("select name from tabBOM where company=%s", self.name)
 		if boms:
 			frappe.db.sql("delete from tabBOM where company=%s", self.name)
-			for dt in ("BOM Operation", "BOM Item", "BOM Scrap Item", "BOM Explosion Item"):
+			for dt in ("BOM Operation", "BOM Item", "BOM Secondary Item", "BOM Explosion Item"):
 				frappe.db.sql(
 					"delete from `tab{}` where parent in ({})".format(dt, ", ".join(["%s"] * len(boms))),
 					tuple(boms),

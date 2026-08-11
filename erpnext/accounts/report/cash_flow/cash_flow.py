@@ -80,6 +80,7 @@ def execute(filters=None):
 				"parent_section": None,
 				"indent": 0.0,
 				"section": cash_flow_section["section_header"],
+				"currency": company_currency,
 			}
 		)
 
@@ -132,7 +133,14 @@ def execute(filters=None):
 		)
 
 	net_change_in_cash = add_total_row_account(
-		data, data, _("Net Change in Cash"), period_list, company_currency, summary_data, filters
+		data,
+		data,
+		_("Net Change in Cash"),
+		period_list,
+		company_currency,
+		summary_data,
+		filters,
+		add_blank_row=False,
 	)
 
 	if filters.show_opening_and_closing_balance:
@@ -250,7 +258,17 @@ def get_start_date(period, accumulated_values, company):
 	return start_date
 
 
-def add_total_row_account(out, data, label, period_list, currency, summary_data, filters, consolidated=False):
+def add_total_row_account(
+	out,
+	data,
+	label,
+	period_list,
+	currency,
+	summary_data,
+	filters,
+	consolidated=False,
+	add_blank_row=True,
+):
 	total_row = {
 		"section_name": "'" + _("{0}").format(label) + "'",
 		"section": "'" + _("{0}").format(label) + "'",
@@ -275,7 +293,9 @@ def add_total_row_account(out, data, label, period_list, currency, summary_data,
 			total_row["total"] += row["total"]
 
 	out.append(total_row)
-	out.append({})
+
+	if add_blank_row:
+		out.append({})
 
 	return total_row
 

@@ -1490,6 +1490,96 @@ class TestPurchaseInvoice(ERPNextTestSuite, StockTestMixin):
 		)
 		frappe.db.set_value("Company", "_Test Company", "exchange_gain_loss_account", original_account)
 
+	def test_stock_adjustment_account_fallbacks_when_default_expense_account_unset(self):
+		from erpnext.accounts.doctype.purchase_invoice.purchase_invoice import PurchaseInvoice
+
+		class StockAdjustmentInvoice:
+			company = "_Test Company"
+			conversion_rate = 1
+			update_stock = 1
+			is_internal_supplier = 0
+			return_against = None
+			project = None
+
+			def __init__(self, is_return, defaults):
+				self.is_return = is_return
+				self.defaults = defaults
+
+			def get(self, fieldname):
+				return None
+
+			def get_company_default(self, fieldname, ignore_validation=False):
+				return self.defaults.get(fieldname)
+
+			def get_gl_dict(self, args, *unused_args, **unused_kwargs):
+				return frappe._dict(args)
+
+		def make_invoice(is_return, defaults):
+			return StockAdjustmentInvoice(is_return, defaults)
+
+		def make_item(is_fixed_asset=0, expense_account="Item Expense - _TC"):
+			return frappe._dict(
+				{
+					"name": "row-1",
+					"warehouse": "Stores - _TC",
+					"valuation_rate": 10,
+					"qty": 10,
+					"conversion_factor": 1,
+					"base_net_amount": 100,
+					"item_tax_amount": 0,
+					"landed_cost_voucher_amount": 0,
+					"sales_incoming_rate": 0,
+					"is_fixed_asset": is_fixed_asset,
+					"expense_account": expense_account,
+					"cost_center": "Main - _TC",
+					"project": None,
+					"precision": lambda fieldname: 2,
+				}
+			)
+
+		defaults = {
+			"default_expense_account": None,
+			"stock_received_but_not_billed": "Stock Received But Not Billed - _TC",
+			"asset_received_but_not_billed": "Asset Received But Not Billed - _TC",
+		}
+		test_cases = (
+			(
+				"company default expense",
+				0,
+				make_item(),
+				{**defaults, "default_expense_account": "Default Expense - _TC"},
+				"Default Expense - _TC",
+			),
+			("stock rbnb", 0, make_item(), defaults, "Stock Received But Not Billed - _TC"),
+			(
+				"asset rbnb",
+				0,
+				make_item(is_fixed_asset=1),
+				defaults,
+				"Asset Received But Not Billed - _TC",
+			),
+			("return item expense", 1, make_item(), defaults, "Item Expense - _TC"),
+			(
+				"return without item expense",
+				1,
+				make_item(expense_account=None),
+				defaults,
+				"Stock Received But Not Billed - _TC",
+			),
+		)
+
+		for label, is_return, item, company_defaults, expected_account in test_cases:
+			with self.subTest(label=label):
+				invoice = make_invoice(is_return, company_defaults)
+				gl_entries = []
+				PurchaseInvoice.make_stock_adjustment_entry(
+					invoice, gl_entries, item, {(item.name, item.warehouse): 90}, "INR"
+				)
+
+				self.assertEqual(gl_entries[0].account, expected_account)
+				self.assertEqual(gl_entries[0].debit, 10)
+				self.assertEqual(gl_entries[0].debit_in_transaction_currency, 10)
+
 	@ERPNextTestSuite.change_settings("Accounts Settings", {"unlink_payment_on_cancellation_of_invoice": 1})
 	def test_purchase_invoice_advance_taxes(self):
 		from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
@@ -2928,6 +3018,24 @@ class TestPurchaseInvoice(ERPNextTestSuite, StockTestMixin):
 		# Test 4 - Since this PI is overbilled by 130% and only 120% is allowed, it will fail
 		self.assertRaises(frappe.ValidationError, pi.submit)
 
+	@ERPNextTestSuite.change_settings("Accounts Settings", {"over_billing_allowance": 0})
+	def test_non_stock_item_over_billing_against_po_is_blocked(self):
+		service_item = create_item(
+			"_Test Service Item Non Stock PI",
+			is_stock_item=0,
+			is_purchase_item=1,
+		).name
+
+		po = create_purchase_order(item_code=service_item, qty=5, rate=100, do_not_save=False)
+		po.submit()
+
+		pi = make_pi_from_po(po.name)
+		pi.items[0].qty = 10  # overbill by 100 %
+		pi.save()
+
+		with self.assertRaises(frappe.ValidationError):
+			pi.submit()
+
 	def test_discount_percentage_not_set_when_amount_is_manually_set(self):
 		pi = make_purchase_invoice(do_not_save=True)
 		discount_amount = 7
@@ -2961,6 +3069,60 @@ class TestPurchaseInvoice(ERPNextTestSuite, StockTestMixin):
 
 		pr = make_purchase_receipt_from_pi(pi.name)
 		self.assertFalse(pr.items)
+
+	@ERPNextTestSuite.change_settings("Accounts Settings", {"enable_common_party_accounting": True})
+	def test_purchase_invoice_return_common_party_je_has_no_negative_amounts(self):
+		from erpnext.accounts.doctype.opening_invoice_creation_tool.test_opening_invoice_creation_tool import (
+			make_customer,
+		)
+		from erpnext.accounts.doctype.party_link.party_link import create_party_link
+		from erpnext.controllers.sales_and_purchase_return import make_return_doc
+
+		customer = make_customer(customer="_Test Common Party Return PI")
+		supplier = create_supplier(supplier_name="_Test Common Party Return PI").name
+		# Supplier must be secondary so get_common_party_link finds it via the PI's party_type
+		party_link = create_party_link("Customer", customer, supplier)
+
+		pi = make_purchase_invoice(supplier=supplier, parent_cost_center="_Test Cost Center - _TC")
+
+		return_pi = make_return_doc(pi.doctype, pi.name)
+		return_pi.submit()
+
+		# JE for the return should credit the supplier (secondary/reconciliation) account
+		# and debit the customer (primary) account — all positive amounts
+		jv_accounts = frappe.get_all(
+			"Journal Entry Account",
+			filters={"reference_type": return_pi.doctype, "reference_name": return_pi.name, "docstatus": 1},
+			fields=["debit_in_account_currency", "credit_in_account_currency", "account"],
+		)
+
+		self.assertTrue(jv_accounts, "Expected a Journal Entry for the return invoice")
+		for row in jv_accounts:
+			self.assertGreaterEqual(
+				row.debit_in_account_currency,
+				0,
+				f"Negative debit on account {row.account}",
+			)
+			self.assertGreaterEqual(
+				row.credit_in_account_currency,
+				0,
+				f"Negative credit on account {row.account}",
+			)
+
+		# Supplier (secondary) account must be credited, not debited
+		supplier_row = next(r for r in jv_accounts if r.account == pi.credit_to)
+		self.assertGreater(supplier_row.credit_in_account_currency, 0)
+		self.assertEqual(supplier_row.debit_in_account_currency, 0)
+
+		party_link.delete()
+
+	def test_purchase_invoice_cancellation_post_account_freezing_date(self):
+		pi = make_purchase_invoice()
+		frappe.db.set_value("Company", "_Test Company", "accounts_frozen_till_date", add_days(getdate(), 1))
+		try:
+			self.assertRaises(frappe.ValidationError, pi.cancel)
+		finally:
+			frappe.db.set_value("Company", "_Test Company", "accounts_frozen_till_date", None)
 
 
 def set_advance_flag(company, flag, default_account):

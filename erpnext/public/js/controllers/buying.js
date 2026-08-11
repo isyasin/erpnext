@@ -25,15 +25,15 @@ erpnext.buying = {
 					};
 				});
 
-				const project_filters = {
+				const get_project_filters = () => ({
 					query: "erpnext.controllers.queries.get_project_name",
 					filters: {
-						company: doc.company,
+						company: this.frm.doc.company,
 					},
-				};
+				});
 
-				this.frm.set_query("project", (_) => project_filters);
-				this.frm.set_query("project", "items", (_, __, ___) => project_filters);
+				this.frm.set_query("project", get_project_filters);
+				this.frm.set_query("project", "items", get_project_filters);
 
 				if (
 					this.frm.doc.__islocal &&
@@ -611,6 +611,9 @@ erpnext.buying.get_items_from_product_bundle = function (frm) {
 				fieldname: "product_bundle",
 				options: "Product Bundle",
 				reqd: 1,
+				get_query: () => {
+					return { filters: { disabled: 0 } };
+				},
 			},
 			{
 				fieldtype: "Currency",

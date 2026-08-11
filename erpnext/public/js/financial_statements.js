@@ -15,6 +15,8 @@ erpnext.financial_statements = {
 	},
 
 	formatter: function (value, row, column, data, default_formatter, filter) {
+		if (erpnext.financial_statements.is_blank_row(data)) return "";
+
 		const report_params = [value, row, column, data, default_formatter, filter];
 		// Growth/Margin
 		if (erpnext.financial_statements._is_special_view(column, data))
@@ -25,9 +27,40 @@ erpnext.financial_statements = {
 		else return erpnext.financial_statements._format_standard_report(...report_params);
 	},
 
+	is_blank_row: function (data) {
+		if (!data || data.segment_values) return false;
+		return (
+			!data.account &&
+			!data.accounts &&
+			!data.child_accounts &&
+			!data.account_name &&
+			!data.section_name
+		);
+	},
+
 	_is_special_view: function (column, data) {
 		if (!data) return false;
 		const view = get_filter_value("selected_view");
+
+		if (!["Growth", "Margin"].includes(view)) return false;
+
+		if (get_filter_value("report_template")) {
+			const columnInfo = erpnext.financial_statements._parse_column_info(column.fieldname, data);
+			// Account column
+			if (columnInfo.isAccount) return false;
+
+			const periodKeys = data._segment_info?.period_keys || [];
+
+			if (!periodKeys.includes(columnInfo.fieldname)) return false;
+
+			if (view === "Growth") {
+				// First period of new segment
+				if (periodKeys[0] === columnInfo.fieldname) return false;
+			}
+
+			return true;
+		}
+
 		return (view === "Growth" && column.colIndex >= 3) || (view === "Margin" && column.colIndex >= 2);
 	},
 

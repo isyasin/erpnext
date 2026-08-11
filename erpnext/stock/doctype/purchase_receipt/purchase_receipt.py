@@ -15,7 +15,6 @@ from pypika import functions as fn
 import erpnext
 from erpnext.accounts.utils import get_account_currency
 from erpnext.assets.doctype.asset.asset import get_asset_account, is_cwip_accounting_enabled
-from erpnext.buying.utils import check_on_hold_or_closed_status
 from erpnext.controllers.accounts_controller import merge_taxes
 from erpnext.controllers.buying_controller import BuyingController
 from erpnext.stock.doctype.delivery_note.delivery_note import make_inter_company_transaction
@@ -264,7 +263,7 @@ class PurchaseReceipt(BuyingController):
 		self.validate_cwip_accounts()
 		self.validate_provisional_expense_account()
 
-		self.check_on_hold_or_closed_status()
+		self.check_for_on_hold_or_closed_status("Purchase Order", "purchase_order")
 
 		if getdate(self.posting_date) > getdate(nowdate()):
 			throw(_("Posting Date cannot be future date"))
@@ -372,14 +371,6 @@ class PurchaseReceipt(BuyingController):
 		po_qty, po_warehouse = frappe.db.get_value("Purchase Order Item", po_detail, ["qty", "warehouse"])
 		return po_qty, po_warehouse
 
-	# Check for Closed status
-	def check_on_hold_or_closed_status(self):
-		check_list = []
-		for d in self.get("items"):
-			if d.meta.get_field("purchase_order") and d.purchase_order and d.purchase_order not in check_list:
-				check_list.append(d.purchase_order)
-				check_on_hold_or_closed_status("Purchase Order", d.purchase_order)
-
 	# on submit
 	def on_submit(self):
 		super().on_submit()
@@ -442,29 +433,10 @@ class PurchaseReceipt(BuyingController):
 						row.received_qty,
 					)
 
-	def check_next_docstatus(self):
-		submit_rv = frappe.db.sql(
-			"""select t1.name
-			from `tabPurchase Invoice` t1,`tabPurchase Invoice Item` t2
-			where t1.name = t2.parent and t2.purchase_receipt = %s and t1.docstatus = 1""",
-			(self.name),
-		)
-		if submit_rv:
-			frappe.throw(_("Purchase Invoice {0} is already submitted").format(self.submit_rv[0][0]))
-
 	def on_cancel(self):
 		super().on_cancel()
 
-		self.check_on_hold_or_closed_status()
-		# Check if Purchase Invoice has been submitted against current Purchase Order
-		submitted = frappe.db.sql(
-			"""select t1.name
-			from `tabPurchase Invoice` t1,`tabPurchase Invoice Item` t2
-			where t1.name = t2.parent and t2.purchase_receipt = %s and t1.docstatus = 1""",
-			self.name,
-		)
-		if submitted:
-			frappe.throw(_("Purchase Invoice {0} is already submitted").format(submitted[0][0]))
+		self.check_for_on_hold_or_closed_status("Purchase Order", "purchase_order")
 
 		self.update_prevdoc_status()
 		self.update_billing_status()
@@ -533,6 +505,7 @@ class PurchaseReceipt(BuyingController):
 				remarks=remarks,
 				against_account=stock_asset_rbnb,
 				account_currency=account_currency,
+				project=item.project,
 				item=item,
 			)
 
@@ -561,14 +534,7 @@ class PurchaseReceipt(BuyingController):
 				else flt(item.net_amount, item.precision("net_amount"))
 			)
 
-			outgoing_amount = (
-				flt((item.base_net_amount / item.received_qty) * item.qty, item.precision("base_net_amount"))
-				if item.received_qty
-				and frappe.get_single_value(
-					"Buying Settings", "bill_for_rejected_quantity_in_purchase_invoice"
-				)
-				else item.base_net_amount
-			)
+			outgoing_amount = item.base_net_amount
 			if self.is_internal_transfer() and item.valuation_rate:
 				outgoing_amount = abs(get_stock_value_difference(self.name, item.name, item.from_warehouse))
 				credit_amount = outgoing_amount
@@ -593,6 +559,7 @@ class PurchaseReceipt(BuyingController):
 					against_account=stock_asset_account_name,
 					debit_in_account_currency=-1 * flt(outgoing_amount, item.precision("base_net_amount")),
 					account_currency=account_currency,
+					project=item.project,
 					item=item,
 				)
 
@@ -617,6 +584,7 @@ class PurchaseReceipt(BuyingController):
 							against_account=self.supplier,
 							debit_in_account_currency=-1 * discrepancy_caused_by_exchange_rate_difference,
 							account_currency=account_currency,
+							project=item.project,
 							item=item,
 						)
 
@@ -630,6 +598,7 @@ class PurchaseReceipt(BuyingController):
 							against_account=self.supplier,
 							debit_in_account_currency=-1 * discrepancy_caused_by_exchange_rate_difference,
 							account_currency=account_currency,
+							project=item.project,
 							item=item,
 						)
 
@@ -664,6 +633,14 @@ class PurchaseReceipt(BuyingController):
 							item=item,
 						)
 
+		def make_expenses_added_to_stock_entries(item):
+			if not self.book_stock_expense_enabled():
+				return
+
+			amount = flt(item.landed_cost_voucher_amount, item.precision("base_net_amount"))
+			if amount and not item.is_fixed_asset:
+				self.append_expenses_added_to_stock_pair(gl_entries, item.item_code, amount, item)
+
 		def make_amount_difference_entry(item):
 			if item.amount_difference_with_purchase_invoice and stock_asset_rbnb:
 				account_currency = get_account_currency(stock_asset_rbnb)
@@ -692,6 +669,7 @@ class PurchaseReceipt(BuyingController):
 					remarks=remarks,
 					against_account=stock_asset_account_name,
 					account_currency=supplier_warehouse_account_currency,
+					project=item.project,
 					item=item,
 				)
 
@@ -807,6 +785,7 @@ class PurchaseReceipt(BuyingController):
 					make_item_asset_inward_gl_entry(d, stock_value_diff, stock_asset_account_name)
 					outgoing_amount = make_stock_received_but_not_billed_entry(d)
 					make_landed_cost_gl_entries(d)
+					make_expenses_added_to_stock_entries(d)
 					make_amount_difference_entry(d)
 					make_sub_contracting_gl_entries(d)
 					make_divisional_loss_gl_entry(d, outgoing_amount)
@@ -902,6 +881,12 @@ class PurchaseReceipt(BuyingController):
 
 	def make_tax_gl_entries(self, gl_entries, via_landed_cost_voucher=False):
 		negative_expense_to_be_booked = sum([flt(d.item_tax_amount) for d in self.get("items")])
+
+		# Amount of each valuation charge actually capitalized into stock/asset valuation, keyed by
+		# tax row name. This is what must be credited to each tax account - a non-stock item's share
+		# of a spread-across-all-items charge is not capitalized, so it is excluded here.
+		capitalized_valuation_tax = self.get_capitalized_valuation_tax()
+
 		# Cost center-wise amount breakup for other charges included for valuation
 		valuation_tax = {}
 		for tax in self.get("taxes"):
@@ -914,10 +899,8 @@ class PurchaseReceipt(BuyingController):
 							tax.idx, _(tax.category)
 						)
 					)
-				valuation_tax.setdefault(tax.name, 0)
-				valuation_tax[tax.name] += (tax.add_deduct_tax == "Add" and 1 or -1) * flt(
-					tax.base_tax_amount_after_discount_amount
-				)
+
+				valuation_tax[tax.name] = capitalized_valuation_tax.get(tax.name, 0.0)
 
 		if negative_expense_to_be_booked and valuation_tax:
 			# Backward compatibility:
@@ -1041,6 +1024,13 @@ class PurchaseReceipt(BuyingController):
 			return
 
 		production_plan_references = self.get_production_plan_references()
+		if not production_plan_references:
+			return
+
+		reservable_plans = self.get_reservable_production_plans(production_plan_references)
+		if not reservable_plans:
+			return
+
 		production_plan_items = []
 		self.reload()
 
@@ -1048,6 +1038,9 @@ class PurchaseReceipt(BuyingController):
 		for row in self.items:
 			if row.material_request_item and row.material_request_item in production_plan_references:
 				_ref = production_plan_references[row.material_request_item]
+				if _ref.production_plan not in reservable_plans:
+					continue
+
 				docnames.append(_ref.production_plan)
 				row.update(
 					{
@@ -1072,6 +1065,25 @@ class PurchaseReceipt(BuyingController):
 			sre.transfer_reservation_entries_to(
 				docnames, from_doctype="Production Plan", to_doctype="Work Order"
 			)
+
+	def get_reservable_production_plans(self, production_plan_references) -> set:
+		"""Production Plans that opted into stock reservation (``reserve_stock``).
+
+		A Production Plan only gets this flag set if "Auto Reserve Stock" was enabled in
+		Stock Settings when it was created, or the user ticked "Reserve Stock" manually.
+		Without this check, a Purchase Receipt would auto-reserve stock for every
+		Production Plan whenever "Enable Stock Reservation" is on, ignoring both of those.
+		"""
+		plan_names = {ref.production_plan for ref in production_plan_references.values()}
+		return {
+			p.name
+			for p in frappe.get_all(
+				"Production Plan",
+				filters={"name": ["in", list(plan_names)]},
+				fields=["name", "reserve_stock"],
+			)
+			if p.reserve_stock
+		}
 
 	def get_production_plan_references(self):
 		production_plan_references = frappe._dict()
@@ -1381,7 +1393,7 @@ def get_billed_qty_amount_against_purchase_receipt(pr_doc):
 		.on(parent_table.name == table.parent)
 		.select(
 			table.pr_detail,
-			fn.Sum(table.amount * parent_table.conversion_rate).as_("amount"),
+			fn.Sum(table.base_net_amount).as_("amount"),
 			fn.Sum(table.qty).as_("qty"),
 		)
 		.where((table.pr_detail.isin(pr_names)) & (table.docstatus == 1))
@@ -1427,7 +1439,7 @@ def get_billed_qty_amount_against_purchase_order(pr_doc):
 			.select(
 				table.po_detail,
 				fn.Sum(table.qty).as_("qty"),
-				fn.Sum(table.amount * parent_table.conversion_rate).as_("amount"),
+				fn.Sum(table.base_net_amount).as_("amount"),
 			)
 			.where((table.po_detail.isin(po_names)) & (table.docstatus == 1) & (table.pr_detail.isnull()))
 			.groupby(table.po_detail)

@@ -12,6 +12,7 @@ from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import (
 	get_accounting_dimensions,
 )
 from erpnext.accounts.doctype.bank_account.bank_account import get_party_bank_account
+from erpnext.accounts.doctype.mode_of_payment.mode_of_payment import validate_enabled_mode_of_payment
 from erpnext.accounts.doctype.payment_entry.payment_entry import (
 	get_payment_entry,
 )
@@ -109,11 +110,16 @@ class PaymentRequest(Document):
 		self.db_set("status", "Cancelled")
 
 	def validate(self):
+		validate_enabled_mode_of_payment(self.mode_of_payment)
 		if self.get("__islocal"):
 			self.status = "Draft"
 		self.validate_reference_document()
+		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
+		ref_doc.check_permission("read")
+		self.validate_reference_company(ref_doc)
+		self.validate_print_format()
 		self.validate_against_payment_reference()
-		self.validate_payment_request_amount()
+		self.validate_payment_request_amount(ref_doc)
 		# self.validate_currency()
 		self.validate_subscription_details()
 
@@ -139,7 +145,38 @@ class PaymentRequest(Document):
 		if not self.reference_doctype or not self.reference_name:
 			frappe.throw(_("To create a Payment Request reference document is required"))
 
-	def validate_payment_request_amount(self):
+		if self.reference_doctype not in ALLOWED_DOCTYPES_FOR_PAYMENT_REQUEST:
+			frappe.throw(
+				_("Payment Requests cannot be created against: {0}").format(
+					frappe.bold(self.reference_doctype)
+				)
+			)
+
+	def validate_print_format(self):
+		if not self.print_format or self.print_format == "Standard":
+			return
+
+		if frappe.db.get_value("Print Format", self.print_format, "doc_type") != self.reference_doctype:
+			frappe.throw(
+				_("Print Format {0} is not valid for {1}").format(
+					frappe.bold(self.print_format), _(self.reference_doctype)
+				),
+				title=_("Invalid Print Format"),
+			)
+
+	def validate_reference_company(self, ref_doc):
+		if self.company != ref_doc.company:
+			frappe.throw(
+				_("Company {0} does not match the company {1} of {2} {3}").format(
+					frappe.bold(self.company),
+					frappe.bold(ref_doc.company),
+					_(self.reference_doctype),
+					frappe.bold(self.reference_name),
+				),
+				title=_("Invalid Company"),
+			)
+
+	def validate_payment_request_amount(self, ref_doc):
 		if self.payment_reference:
 			return
 		if self.grand_total == 0:
@@ -148,7 +185,6 @@ class PaymentRequest(Document):
 				title=_("Invalid Amount"),
 			)
 
-		ref_doc = frappe.get_doc(self.reference_doctype, self.reference_name)
 		if not hasattr(ref_doc, "order_type") or ref_doc.order_type != "Shopping Cart":
 			ref_amount = get_amount(ref_doc, self.payment_account)
 			if not ref_amount:
@@ -425,6 +461,11 @@ class PaymentRequest(Document):
 
 	@frappe.whitelist(methods=["POST"])
 	def resend_payment_email(self):
+		# the caller can supply this document's values, so only the saved ones are trusted
+		self.reload()
+		self.check_permission("email")
+		frappe.has_permission(self.reference_doctype, "read", self.reference_name, throw=True)
+
 		if not (
 			self.docstatus == 1
 			and self.payment_request_type == "Inward"
@@ -474,7 +515,7 @@ class PaymentRequest(Document):
 		}
 
 		if self.message:
-			return frappe.render_template(self.message, context)
+			return frappe.render_template(self.message, context, restrict_globals=True)
 
 	def set_failed(self):
 		pass
@@ -711,6 +752,7 @@ def make_payment_request(**args):
 			party_account = get_party_account(party_type, ref_doc.get(party_type.lower()), ref_doc.company)
 			party_account_currency = get_account_currency(party_account)
 
+		subscription_plans = get_subscription_details(ref_doc.doctype, ref_doc.name)
 		pr.update(
 			{
 				"payment_gateway_account": gateway_account.get("name"),
@@ -742,12 +784,24 @@ def make_payment_request(**args):
 					or gateway_account.get("payment_channel", "Email") != "Email"
 				),
 				"phone_number": args.get("phone_number") if args.get("phone_number") else None,
+				"is_a_subscription": 1 if subscription_plans else 0,
 			}
 		)
 
 		if selected_payment_schedules:
 			apply_payment_references(pr, payment_reference)
 
+		if subscription_plans:
+			pr.set(
+				"subscription_plans",
+				[
+					{
+						"plan": row.plan,
+						"qty": row.qty,
+					}
+					for row in subscription_plans
+				],
+			)
 		# Dimensions
 		pr.update(
 			{
@@ -1061,19 +1115,25 @@ def get_dummy_message(doc):
 
 
 @frappe.whitelist()
-def get_subscription_details(reference_doctype, reference_name):
-	if reference_doctype == "Sales Invoice":
-		subscriptions = frappe.db.sql(
-			"""SELECT parent as sub_name FROM `tabSubscription Invoice` WHERE invoice=%s""",
-			reference_name,
-			as_dict=1,
-		)
-		subscription_plans = []
-		for subscription in subscriptions:
-			plans = frappe.get_doc("Subscription", subscription.sub_name).plans
-			for plan in plans:
-				subscription_plans.append(plan)
-		return subscription_plans
+def get_subscription_details(reference_doctype: str, reference_name: str) -> list[dict]:
+	frappe.has_permission(reference_doctype, "read", reference_name, throw=True)
+
+	if not frappe.get_meta(reference_doctype).has_field("subscription"):
+		return []
+
+	subscription = frappe.db.get_value(reference_doctype, reference_name, "subscription")
+
+	if not subscription:
+		return []
+
+	return frappe.get_all(
+		"Subscription Plan Detail",
+		filters={"parent": subscription, "parenttype": "Subscription", "parentfield": "plans"},
+		fields=[
+			"plan",
+			"qty",
+		],
+	)
 
 
 @frappe.whitelist()
@@ -1169,6 +1229,7 @@ def get_irequests_of_payment_request(doc: str | None = None) -> list:
 @frappe.whitelist()
 def get_available_payment_schedules(reference_doctype, reference_name):
 	ref_doc = frappe.get_doc(reference_doctype, reference_name)
+	ref_doc.check_permission()
 
 	if not hasattr(ref_doc, "payment_schedule") or not ref_doc.payment_schedule:
 		return []

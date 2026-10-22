@@ -67,9 +67,9 @@ frappe.ui.form.on("Project", {
 	},
 
 	refresh: function (frm) {
-		if (frm.doc.__islocal) {
-			frm.web_link && frm.web_link.remove();
-		} else {
+		frm.web_link && frm.web_link.closest(".user-action-row").remove();
+
+		if (!frm.doc.__islocal) {
 			frm.add_web_link("/projects?project=" + encodeURIComponent(frm.doc.name));
 
 			frm.trigger("show_dashboard");
@@ -119,8 +119,8 @@ frappe.ui.form.on("Project", {
 									project: frm.doc.name,
 								}
 							)
-							.then(() => {
-								frappe.set_route("List", "Task", "Kanban", frm.doc.project_name);
+							.then((r) => {
+								frappe.set_route("List", "Task", "Kanban", r.message);
 							});
 					},
 					__("View")
@@ -164,8 +164,8 @@ frappe.ui.form.on("Project", {
 					options: "Completed\nCancelled",
 				},
 			],
-			primary_action: function () {
-				frm.events.set_status(frm, dialog.get_values().status);
+			primary_action: function (values) {
+				frm.events.set_status(frm, values.status);
 				dialog.hide();
 			},
 			primary_action_label: __("Set Project Status"),

@@ -78,6 +78,7 @@ class POSProfile(Document):
 		self.validate_disabled()
 		self.validate_default_profile()
 		self.validate_all_link_fields()
+		self.validate_write_off_settings()
 		self.validate_duplicate_groups()
 		self.validate_payment_methods()
 		self.validate_accounting_dimensions()
@@ -154,6 +155,25 @@ class POSProfile(Document):
 					{"doctype": link_dt, "company": self.company, "name": link_dn}
 				):
 					frappe.throw(_("{0} does not belong to Company {1}").format(link_dn, self.company))
+
+	def validate_write_off_settings(self):
+		for fieldname, doctype in (
+			("write_off_account", "Account"),
+			("write_off_cost_center", "Cost Center"),
+		):
+			if not (value := self.get(fieldname)):
+				continue
+
+			company, is_group = frappe.db.get_value(doctype, value, ["company", "is_group"])
+			if company != self.company:
+				frappe.throw(_("{0} does not belong to Company {1}").format(value, self.company))
+			if is_group:
+				frappe.throw(_("{0} cannot be a group").format(_(self.meta.get_label(fieldname))))
+			if (
+				doctype == "Account"
+				and frappe.get_cached_value("Account", value, "report_type") != "Profit and Loss"
+			):
+				frappe.throw(_("Write Off Account must be a Profit and Loss account"))
 
 	def validate_duplicate_groups(self):
 		item_groups = [d.item_group for d in self.item_groups]
@@ -280,40 +300,40 @@ def pos_profile_query(doctype, txt, searchfield, start, page_len, filters):
 	user = frappe.session["user"]
 	company = filters.get("company") or frappe.defaults.get_user_default("company")
 
-	args = {
-		"user": user,
-		"start": start,
-		"company": company,
-		"page_len": page_len,
-		"txt": "%%%s%%" % txt,
-	}
+	allowed_pos_profiles = frappe.get_list("POS Profile", pluck="name")
 
-	pos_profile = frappe.db.sql(
-		"""select pf.name
-		from
-			`tabPOS Profile` pf, `tabPOS Profile User` pfu
-		where
-			pfu.parent = pf.name and pfu.user = %(user)s and pf.company = %(company)s
-			and (pf.name like %(txt)s)
-			and pf.disabled = 0 limit %(page_len)s offset %(start)s""",
-		args,
+	if not allowed_pos_profiles:
+		return {}
+
+	pf = frappe.qb.DocType("POS Profile")
+	pfu = frappe.qb.DocType("POS Profile User")
+
+	pos_profile = (
+		frappe.qb.from_(pf)
+		.inner_join(pfu)
+		.on(pfu.parent == pf.name)
+		.select(pf.name)
+		.where((pfu.user == user) & (pf.company == company) & pf.name.like(f"%{txt}%") & (pf.disabled == 0))
+		.where(pf.name.isin(allowed_pos_profiles))
+		.limit(page_len)
+		.offset(start)
+		.run()
 	)
 
 	if not pos_profile:
-		del args["user"]
-
-		pos_profile = frappe.db.sql(
-			"""select pf.name
-			from
-				`tabPOS Profile` pf left join `tabPOS Profile User` pfu
-			on
-				pf.name = pfu.parent
-			where
-				ifnull(pfu.user, '') = ''
-				and pf.company = %(company)s
-				and pf.name like %(txt)s
-				and pf.disabled = 0""",
-			args,
+		pos_profile = (
+			frappe.qb.from_(pf)
+			.left_join(pfu)
+			.on(pf.name == pfu.parent)
+			.select(pf.name)
+			.where(
+				(pfu.user.isnull() | (pfu.user == ""))
+				& (pf.company == company)
+				& pf.name.like(f"%{txt}%")
+				& (pf.disabled == 0)
+				& (pf.name.isin(allowed_pos_profiles))
+			)
+			.run()
 		)
 
 	return pos_profile
